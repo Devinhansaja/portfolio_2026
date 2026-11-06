@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Portfolio Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">ADMIN<b>.</b> <span class="mono">portfolio editor</span></div>
+    <div class="status" id="status" role="status"></div>
+    <div class="actions">
+      <button type="button" class="ghost" id="btn-preview" title="Show or hide the live preview">Preview</button>
+      <button type="button" class="ghost" id="btn-download" title="Download data.js (text only)">Download</button>
+      <button type="button" class="primary" id="btn-publish" disabled>Publish</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav id="nav" aria-label="Sections"></nav>
+    <main id="editor"></main>
+    <section class="preview" id="preview" aria-label="Live preview">
+      <div class="pv-bar">
+        <span class="mono">live preview</span>
+        <span class="pv-tools">
+          <button type="button" class="ghost sm" id="pv-device">Mobile</button>
+          <button type="button" class="ghost sm" id="pv-reload" title="Reload preview">↻</button>
+        </span>
+      </div>
+      <div class="pv-wrap" id="pv-wrap"><iframe id="pv" title="Live preview of the site"></iframe></div>
+    </section>
+  </div>
+
+  <div id="busy" hidden><div class="spinner"></div><p id="busy-text">Working…</p></div>
+  <div id="toasts" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

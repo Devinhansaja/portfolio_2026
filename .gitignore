@@ -1,0 +1,9 @@
+# Local tool settings
+.claude/
+.vercel/
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store
+*.log
