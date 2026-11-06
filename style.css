@@ -147,6 +147,8 @@ body:not(.designing) .intro-skip { opacity: 0; pointer-events: none; }
 .loc { margin-top: 22px; }
 .portrait { align-self: end; justify-self: center; width: min(100%, 440px); }
 .portrait img, .portrait svg { width: 100%; height: auto; }
+/* photo fades out at the bottom so the cut at the waist blends into the page */
+.portrait img { -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); }
 .hero-stats { display: grid; gap: 26px; padding-bottom: 30px; }
 .stat { border-left: 2px solid var(--primary); padding-left: 14px; }
 .stat strong { display: block; font: 400 clamp(40px, 4vw, 60px)/1 var(--display); color: var(--accent); }
@@ -381,8 +383,9 @@ img.cmp-layer, .cmp-layer img { display: block; width: 100%; height: 100%; objec
    PORTFOLIO word sits behind the photo instead of behind the text */
 @media (max-width: 1000px) {
   .hero { grid-template-columns: 1fr; padding-top: 92px; align-items: start; gap: 18px; min-height: 0; }
-  .portrait { --pw: min(68vw, 400px); width: var(--pw); order: -1; margin-top: 8px; }
-  .hero-bg-word { top: calc(100px + min(34vw, 200px)); font-size: min(25vw, 230px); }
+  .portrait { width: min(64vw, 380px); order: -1; margin-top: 8px; }
+  /* sits behind the upper body of the (3:4) photo */
+  .hero-bg-word { top: calc(100px + min(36vw, 214px)); font-size: min(25vw, 230px); }
   .hero-left { padding-bottom: 0; max-width: 640px; }
   .hero h1 { font-size: clamp(46px, 11vw, 96px); }
   .hero-tag { max-width: 520px; }

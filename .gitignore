@@ -2,6 +2,9 @@
 .claude/
 .vercel/
 
+# Original photos (the site uses the cleaned copies in assets/)
+WhatsApp Image*
+
 # OS junk
 Thumbs.db
 desktop.ini

@@ -11,7 +11,7 @@ const PORTFOLIO = {
     "I build web and mobile apps, design brands and create content — bridging development, design and digital marketing.",
   location: "Ingiriya, Sri Lanka",
   available: true,
-  photo: "assets/me.webp", // transparent image looks best
+  photo: "assets/me-photo.webp", // transparent image looks best
   cvLink: "assets/Manitha_Devin_Hansaja_CV.pdf",
 
   // Loading screen shown before the site builds itself
