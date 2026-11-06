@@ -412,32 +412,65 @@
   </footer>`;
 
 
-  // ---------- Build-with-cursors engine ----------
+  // ---------- Build engine: cursors arrive one after another; each builds ONE element, then leaves ----------
+  // Each cursor's label says what it is doing (e.g. "Writing name", "Placing photo").
   const queue = [];
-  let running = false;
+  let inFlight = 0, pumping = false;
+  let idleWaiters = [];
+  const isIdle = () => !queue.length && !inFlight;
+  const whenIdle = () => (isIdle() ? Promise.resolve() : new Promise((r) => idleWaiters.push(r)));
+  const checkIdle = () => isIdle() && idleWaiters.splice(0).forEach((r) => r());
 
   function enqueue(el) {
     if (el.dataset.q) return;
     el.dataset.q = "1";
     queue.push(el);
-    if (!running) pump();
+    if (!pumping) pump();
   }
   function pump() {
-    running = queue.length > 0;
-    if (!running) return;
-    // build visible elements top-to-bottom
-    queue.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
-    drawBuild(queue.shift());
-    setTimeout(pump, 100);
+    pumping = queue.length > 0;
+    if (!pumping) return checkIdle();
+    // next = reading order: top to bottom, then left to right
+    queue.sort((a, b) => {
+      const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+      return Math.abs(ra.top - rb.top) > 12 ? ra.top - rb.top : ra.left - rb.left;
+    });
+    inFlight++;
+    drawBuild(queue.shift()).finally(() => {
+      inFlight--;
+      checkIdle();
+    });
+    setTimeout(pump, 230); // the next cursor comes in a moment later
   }
+
+  // What each cursor says it is doing
+  const ACTIONS = [
+    [".logo", "Adding logo"], [".nav-links", "Adding menu"], [".nav-cta", "Adding status"],
+    [".kicker", "Writing roles"], [".hello", "Writing greeting"], [".hero h1", "Writing name"],
+    [".hero-role", "Adding role"], [".hero-tag", "Writing intro"], [".hero-btns", "Adding buttons"],
+    [".loc", "Adding location"], [".hero-bg-word", "Placing title"], [".portrait", "Placing photo"],
+    [".stat", "Adding stat"], [".scroll-hint", "Adding scroll hint"], [".label", "Adding label"],
+    ["h2", "Writing heading"], [".sec-note", "Writing text"], [".filters", "Adding filters"],
+    [".card", "Adding project"], [".reel", "Adding reel"], [".yt-head h3", "Writing heading"],
+    [".yt-series", "Adding link"], [".yt-card", "Embedding video"], [".fb-card", "Embedding page"],
+    [".logos span", "Adding client"], [".cmp-tabs", "Adding tabs"], [".compare", "Placing slider"],
+    [".cmp-caption", "Adding link"], [".col h4", "Adding title"], [".edu", "Adding education"],
+    [".tags", "Adding tags"], [".step", "Adding step"], [".quote", "Adding quote"],
+    [".wins", "Writing tagline"], [".tl-item", "Adding experience"], [".ct-rows li", "Adding contact"],
+    [".socials", "Adding socials"], [".ct-form", "Building form"], [".aw-list li", "Adding award"],
+    [".aw-count", "Adding counter"], [".marquee", "Adding banner"],
+  ];
+  const describe = (el) => (ACTIONS.find(([sel]) => el.matches(sel)) || [, "Building"])[1];
 
   // Elements that first appear as a grey placeholder box, then the real content fades in
   const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card, .yt-card";
   const drawLayer = document.getElementById("draw-layer");
+  let colorIdx = 0;
 
-  // A crosshair cursor presses at the top-left corner and drags the box out to full size,
-  // like drawing a frame in a design tool. The content is revealed as the box grows.
+  // A crosshair cursor glides in, presses at the top-left corner and drags the frame out to full size
+  // (like drawing a frame in Figma). The content is revealed as the frame grows, then the cursor leaves.
   async function drawBuild(el) {
+    if (el.classList.contains("built")) return; // already shown (e.g. intro skipped)
     const r = el.getBoundingClientRect();
     if (reduceMotion || r.width < 2 || r.bottom < -40 || r.top > innerHeight + 40) return reveal(el);
 
@@ -446,18 +479,22 @@
     const x0 = r.left + (fixed ? 0 : scrollX);
     const y0 = r.top + (fixed ? 0 : scrollY);
     const W = r.width, H = r.height;
-    // only measure the page height when the layer is too short (measuring forces a layout)
     if (!fixed && (parseFloat(drawLayer.style.height) || 0) < y0 + H + 40)
       drawLayer.style.height = document.documentElement.scrollHeight + "px";
     const media = el.matches(MEDIA);
 
-    // 1. cursor glides to the start corner
-    const c = makeCursor(undefined, Math.random() < 0.5, "cross", host);
-    const sx = x0 - 60 - Math.random() * 180, sy = y0 - 40 - Math.random() * 120;
+    // 1. cursor (labelled with its job) glides in to the start corner
+    const c = makeCursor(colorIdx++ % 8, true, "cross", host);
+    c.querySelector("span").textContent = describe(el);
+    const sx = x0 - 70 - Math.random() * 160, sy = y0 - 50 - Math.random() * 110;
     pos(c, sx, sy);
-    await tween(280, (e) => pos(c, sx + (x0 - sx) * e, sy + (y0 - sy) * e));
+    c.style.opacity = "0";
+    await tween(300, (e) => {
+      pos(c, sx + (x0 - sx) * e, sy + (y0 - sy) * e);
+      c.style.opacity = String(Math.min(1, e * 2.5));
+    });
 
-    // 2. mouse down -> drag to resize
+    // 2. mouse down -> drag the frame to full size
     c.classList.add("down");
     const box = document.createElement("div");
     box.className = "dbox" + (media ? " fill" : "");
@@ -467,9 +504,8 @@
     host.appendChild(box);
     const size = box.querySelector("b");
     el.classList.add(media ? "drawing-media" : "drawing");
-    const dur = 380 + Math.min(450, (W + H) / 3.5);
     await tween(
-      dur,
+      380 + Math.min(420, (W + H) / 3.5),
       (e) => {
         const w = W * e, h = H * e;
         box.style.width = w + "px";
@@ -489,14 +525,14 @@
     box.classList.add("done");
     setTimeout(() => box.remove(), 800);
 
-    // 4. cursor leaves
-    const ex = x0 + W + 60 + Math.random() * 160, ey = y0 + H + 30 + Math.random() * 90;
-    await wait(110);
+    // 4. job done — the cursor drifts away and disappears
+    const ex = x0 + W + 50 + Math.random() * 120, ey = y0 + H + 30 + Math.random() * 80;
+    await wait(160);
     await tween(
-      340,
+      360,
       (e) => {
         pos(c, x0 + W + (ex - x0 - W) * e, y0 + H + (ey - y0 - H) * e);
-        c.style.opacity = 1 - e;
+        c.style.opacity = String(1 - e);
       },
       (t) => t * t
     );
@@ -569,8 +605,11 @@
 
   async function runIntro() {
     document.body.classList.add("designing");
+    const SETUP_JOBS = ["Setting up grid", "Adding guides", "Planning layout", "Picking colours", "Loading fonts"];
     for (let i = 0; i < 14; i++) {
       const c = makeCursor(i, i % 3 === 0, i % 4 === 0 ? "arrow" : "cross");
+      const lab = c.querySelector("span");
+      if (lab) lab.textContent = SETUP_JOBS[(i / 3) % SETUP_JOBS.length | 0];
       const [x, y] = edgePoint();
       pos(c, x, y);
       swarm.push(c);
@@ -591,7 +630,8 @@
     if (skipped) return;
     leaveSwarm();
     startBuilding();
-    await wait(3400);
+    await wait(300); // let the first elements reach the queue
+    await Promise.race([whenIdle(), wait(15000)]);
     if (!skipped) endIntro();
   }
 
