@@ -13,7 +13,7 @@
   --mute: #8a91a3;
   --blue: var(--primary); /* design-tool frames, rulers, guides */
   --display: "Anton", Impact, sans-serif;
-  --body: "Inter", system-ui, sans-serif;
+  --body: "Inter", "Noto Sans Sinhala", system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
   --pad: clamp(16px, 4vw, 56px);
 }
@@ -280,6 +280,24 @@ h2 { font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--display); letter-spacing: .01e
 .rv-close, .rv-prev, .rv-next { background: none; border: 1px solid var(--line); color: var(--text); border-radius: 99px; padding: 6px 12px; cursor: pointer; font: 500 12px var(--body); }
 .rv-close { width: 32px; height: 32px; padding: 0; border-radius: 50%; font-size: 14px; }
 .rv-close:hover, .rv-prev:hover, .rv-next:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---------- YouTube (long-form) ---------- */
+.yt-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 56px 0 18px; }
+.yt-head h3 { font: 400 clamp(28px, 3.4vw, 44px)/1 var(--display); text-transform: uppercase; letter-spacing: .01em; }
+.yt-series { flex: none; font-size: 13px; font-weight: 600; color: var(--accent); }
+.yt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 18px; }
+.yt-card { background: var(--bg2); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; transition: opacity .45s ease, border-color .3s, transform .3s; }
+.yt-card.built:hover { border-color: #ff3b3b; transform: translateY(-4px); }
+.yt-thumb { position: relative; display: block; width: 100%; aspect-ratio: 16/9; padding: 0; border: 0; background: #000; cursor: pointer; overflow: hidden; }
+.yt-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s, opacity .3s; opacity: .92; }
+.yt-thumb:hover img { transform: scale(1.04); opacity: 1; }
+.yt-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 6px 18px rgba(0,0,0,.5)); transition: transform .2s; }
+.yt-thumb:hover .yt-play { transform: translate(-50%, -50%) scale(1.08); }
+.yt-frame { display: block; width: 100%; aspect-ratio: 16/9; border: 0; background: #000; }
+.yt-body { display: grid; gap: 6px; padding: 16px 18px 18px; }
+.yt-body strong { font-size: 15px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.yt-body .mono { font-size: 10px; text-transform: none; }
+.yt-body a { font-size: 13px; font-weight: 600; color: var(--accent); margin-top: 4px; }
 
 /* ---------- Facebook pages ---------- */
 .fb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 18px; }

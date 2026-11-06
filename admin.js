@@ -522,6 +522,19 @@
       },
     },
     {
+      id: "youtube", label: "YouTube videos", icon: "▶️", anchor: ".yt-head",
+      note: "Long-form videos shown under the reels. Paste a normal YouTube link — the thumbnail appears automatically. If the link has a playlist, a “Full series” link is added.",
+      list: {
+        key: "youtube", singular: "video", title: (v) => v.title,
+        make: () => ({ title: "", channel: "", url: "" }),
+        fields: [
+          T("url", "YouTube link", { type: "url", placeholder: "https://www.youtube.com/watch?v=…" }),
+          T("title", "Title"),
+          T("channel", "Channel / series"),
+        ],
+      },
+    },
+    {
       id: "projects", label: "Projects", icon: "🗂️", anchor: "#work",
       note: "Cards in “Work that speaks”. Filter tabs are made automatically from the categories.",
       list: {

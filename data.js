@@ -159,6 +159,20 @@ const PORTFOLIO = {
     { title: "PTE Tips — Repeat Sentences", client: "PTE Solution", length: "0:29", video: "assets/reels/pte-repeat-sentences.mp4", poster: "assets/reels/pte-repeat-sentences.jpg" },
   ],
 
+  // Long-form YouTube videos (shown under the reels). Paste normal YouTube links; playlist links work too.
+  youtube: [
+    {
+      title: "ස්කූටරය සහ කාන්තාව | මඩ ගහන්න කලින් මේ ටිකත් හිතන්න — Episode 01",
+      channel: "HER with Kalasi · ඇය වෙනුවෙන්",
+      url: "https://www.youtube.com/watch?v=mRhkilTnktI&list=PLDqGAncz_KxfJ-IEhdfzqsAfEzL-uPWZZ",
+    },
+    {
+      title: "සසරින් එතෙරවෙන මාර්ගය සොයාගෙන මහණ දිවියට පැමිණි ඇගේ කතාව — Episode 07",
+      channel: "HER with Kalasi · ඇය වෙනුවෙන්",
+      url: "https://www.youtube.com/watch?v=UKOQNram33Q",
+    },
+  ],
+
   // Facebook pages I manage — shown with Facebook's live page preview
   pages: [
     { name: "Upali Pooja Bhanda", url: "https://www.facebook.com/profile.php?id=100063587616190" },

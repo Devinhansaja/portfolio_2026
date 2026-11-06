@@ -9,7 +9,7 @@
   })();
   const D = PREVIEW || PORTFOLIO;
   // Make sure every list exists, so an empty list in the admin panel never breaks the page.
-  ["roles", "stats", "projects", "clients", "awards", "education", "skills", "tools", "process", "journey", "reels", "pages", "compare"].forEach(
+  ["roles", "stats", "projects", "clients", "awards", "education", "skills", "tools", "process", "journey", "reels", "youtube", "pages", "compare"].forEach(
     (k) => (D[k] = Array.isArray(D[k]) ? D[k] : [])
   );
   D.contact = D.contact || {};
@@ -118,6 +118,47 @@
       </div>
     </article>`;
 
+  // ---------- YouTube (long-form) ----------
+  // Works with watch?v=, youtu.be/, /shorts/, /embed/ and playlist links
+  function ytInfo(url) {
+    try {
+      const u = new URL(url);
+      let id = u.searchParams.get("v") || "";
+      if (!id && /youtu\.be$/.test(u.hostname)) id = u.pathname.slice(1);
+      if (!id) id = (u.pathname.match(/\/(?:shorts|embed|live)\/([\w-]{6,})/) || [])[1] || "";
+      return { id: id.replace(/[^\w-]/g, ""), list: (u.searchParams.get("list") || "").replace(/[^\w-]/g, "") };
+    } catch {
+      return { id: "", list: "" };
+    }
+  }
+  function youtubeBlock() {
+    const vids = D.youtube.map((v) => ({ ...v, ...ytInfo(v.url) })).filter((v) => v.id || v.list);
+    if (!vids.length) return "";
+    const series = vids.find((v) => v.list);
+    return `
+    <div class="yt-head">
+      <h3 class="b">Long-form on <em>YouTube</em></h3>
+      ${series ? `<a class="yt-series b" href="https://www.youtube.com/playlist?list=${series.list}" target="_blank" rel="noopener">Full series ↗</a>` : ""}
+    </div>
+    <div class="yt-grid">
+      ${vids
+        .map(
+          (v) => `<article class="yt-card b">
+        <button class="yt-thumb" type="button" data-id="${v.id}" data-list="${v.list}" aria-label="Play ${esc(v.title)}">
+          ${v.id ? `<img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy" />` : ""}
+          <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 68 48" width="62" height="44"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3.3 34 .3 34 .3S12.7.3 7.5 1.7a8.5 8.5 0 0 0-6 6C.2 12.9.2 24 .2 24s0 11.1 1.3 16.3a8.5 8.5 0 0 0 6 6c5.2 1.4 26.5 1.4 26.5 1.4s21.3 0 26.5-1.4a8.5 8.5 0 0 0 6-6c1.3-5.2 1.3-16.3 1.3-16.3s0-11.1-1.3-16.3z" fill="#f00"/><path d="M27 34l18-10-18-10z" fill="#fff"/></svg></span>
+        </button>
+        <div class="yt-body">
+          <strong>${esc(v.title)}</strong>
+          <span class="mono">${esc(v.channel || "")}</span>
+          <a href="${esc(v.url)}" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+        </div>
+      </article>`
+        )
+        .join("")}
+    </div>`;
+  }
+
   function mock(p) {
     const k =
       {
@@ -170,7 +211,7 @@
   </div></div>
 
   <!-- REELS / VIDEO ADS -->
-  ${D.reels && D.reels.length ? `
+  ${D.reels.length || D.youtube.length ? `
   <section class="section reels-sec" id="reels">
     <div class="sec-head">
       <div>
@@ -190,6 +231,7 @@
         )
         .join("")}
     </div>
+    ${D.youtube.length ? youtubeBlock() : ""}
   </section>` : ""}
 
   <!-- WORK -->
@@ -390,7 +432,7 @@
   }
 
   // Elements that first appear as a grey placeholder box, then the real content fades in
-  const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card";
+  const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card, .yt-card";
   const drawLayer = document.getElementById("draw-layer");
 
   // A crosshair cursor presses at the top-left corner and drags the box out to full size,
@@ -856,6 +898,25 @@
       visible.forEach(playCard); // resume the on-screen previews
     });
   }
+
+  // ---------- YouTube: load the player only when the visitor clicks ----------
+  document.querySelectorAll(".yt-thumb").forEach((b) =>
+    b.addEventListener("click", () => {
+      const { id, list } = b.dataset;
+      const f = document.createElement("iframe");
+      f.className = "yt-frame";
+      f.src = id
+        ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0${list ? `&list=${list}` : ""}`
+        : `https://www.youtube-nocookie.com/embed/videoseries?list=${list}&autoplay=1&rel=0`;
+      f.title = b.getAttribute("aria-label").replace(/^Play /, "");
+      f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      f.allowFullscreen = true;
+      f.referrerPolicy = "strict-origin-when-cross-origin";
+      b.replaceWith(f);
+      // stop the muted reel previews while a YouTube video plays
+      document.querySelectorAll(".reel video").forEach((v) => v.pause());
+    })
+  );
 
   // ---------- Before / after compare ----------
   const cmp = document.getElementById("compare");
