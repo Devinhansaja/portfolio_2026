@@ -386,7 +386,7 @@
     // build visible elements top-to-bottom
     queue.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
     drawBuild(queue.shift());
-    setTimeout(pump, 65);
+    setTimeout(pump, 100);
   }
 
   // Elements that first appear as a grey placeholder box, then the real content fades in
@@ -413,7 +413,7 @@
     const c = makeCursor(undefined, Math.random() < 0.5, "cross", host);
     const sx = x0 - 60 - Math.random() * 180, sy = y0 - 40 - Math.random() * 120;
     pos(c, sx, sy);
-    await tween(190, (e) => pos(c, sx + (x0 - sx) * e, sy + (y0 - sy) * e));
+    await tween(280, (e) => pos(c, sx + (x0 - sx) * e, sy + (y0 - sy) * e));
 
     // 2. mouse down -> drag to resize
     c.classList.add("down");
@@ -425,7 +425,7 @@
     host.appendChild(box);
     const size = box.querySelector("b");
     el.classList.add(media ? "drawing-media" : "drawing");
-    const dur = 240 + Math.min(300, (W + H) / 5);
+    const dur = 380 + Math.min(450, (W + H) / 3.5);
     await tween(
       dur,
       (e) => {
@@ -449,9 +449,9 @@
 
     // 4. cursor leaves
     const ex = x0 + W + 60 + Math.random() * 160, ey = y0 + H + 30 + Math.random() * 90;
-    await wait(60);
+    await wait(110);
     await tween(
-      240,
+      340,
       (e) => {
         pos(c, x0 + W + (ex - x0 - W) * e, y0 + H + (ey - y0 - H) * e);
         c.style.opacity = 1 - e;
@@ -539,17 +539,17 @@
         pos(c, innerWidth * (0.08 + Math.random() * 0.84), innerHeight * (0.12 + Math.random() * 0.76));
       });
     await wait(40);
-    scatter(0.45);
-    await wait(450);
+    scatter(0.65);
+    await wait(650);
     if (skipped) return;
     document.body.classList.add("rulers");
     drawGuides();
-    scatter(0.35);
-    await wait(420);
+    scatter(0.5);
+    await wait(600);
     if (skipped) return;
     leaveSwarm();
     startBuilding();
-    await wait(2600);
+    await wait(3400);
     if (!skipped) endIntro();
   }
 

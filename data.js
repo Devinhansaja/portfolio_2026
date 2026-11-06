@@ -20,7 +20,7 @@ const PORTFOLIO = {
     line1: "Tired of generic websites?",
     line2: "Looking for a developer who designs?",
     line3: "You found him.",
-    handle: "@hansajadevin",
+    handle: "",
   },
 
   stats: [
