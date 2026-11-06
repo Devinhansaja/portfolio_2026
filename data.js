@@ -14,6 +14,15 @@ const PORTFOLIO = {
   photo: "assets/me.webp", // transparent image looks best
   cvLink: "assets/Manitha_Devin_Hansaja_CV.pdf",
 
+  // Loading screen shown before the site builds itself
+  loader: {
+    enabled: true,
+    line1: "Tired of generic websites?",
+    line2: "Looking for a developer who designs?",
+    line3: "You found him.",
+    handle: "@hansajadevin",
+  },
+
   stats: [
     { value: 3, suffix: "+", label: "Years experience" },
     { value: 5, suffix: "", label: "Facebook pages managed" },

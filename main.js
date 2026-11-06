@@ -47,7 +47,8 @@
     parent.appendChild(el);
     return el;
   }
-  const pos = (c, x, y) => (c.style.transform = `translate(${x}px, ${y}px)`);
+  // translate3d keeps cursor movement on the GPU so it stays at the screen's full frame rate
+  const pos = (c, x, y) => (c.style.transform = `translate3d(${x}px, ${y}px, 0)`);
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const easeOut = (t) => 1 - Math.pow(1 - t, 3);
   const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -385,7 +386,7 @@
     // build visible elements top-to-bottom
     queue.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
     drawBuild(queue.shift());
-    setTimeout(pump, 110);
+    setTimeout(pump, 65);
   }
 
   // Elements that first appear as a grey placeholder box, then the real content fades in
@@ -400,32 +401,37 @@
 
     const fixed = !!el.closest(".nav");
     const host = fixed ? layer : drawLayer;
-    if (!fixed) drawLayer.style.height = document.documentElement.scrollHeight + "px";
     const x0 = r.left + (fixed ? 0 : scrollX);
     const y0 = r.top + (fixed ? 0 : scrollY);
     const W = r.width, H = r.height;
+    // only measure the page height when the layer is too short (measuring forces a layout)
+    if (!fixed && (parseFloat(drawLayer.style.height) || 0) < y0 + H + 40)
+      drawLayer.style.height = document.documentElement.scrollHeight + "px";
     const media = el.matches(MEDIA);
 
     // 1. cursor glides to the start corner
     const c = makeCursor(undefined, Math.random() < 0.5, "cross", host);
     const sx = x0 - 60 - Math.random() * 180, sy = y0 - 40 - Math.random() * 120;
     pos(c, sx, sy);
-    await tween(300, (e) => pos(c, sx + (x0 - sx) * e, sy + (y0 - sy) * e));
+    await tween(190, (e) => pos(c, sx + (x0 - sx) * e, sy + (y0 - sy) * e));
 
     // 2. mouse down -> drag to resize
     c.classList.add("down");
     const box = document.createElement("div");
     box.className = "dbox" + (media ? " fill" : "");
     box.innerHTML = "<i></i><i></i><i></i><i></i><b></b>";
+    box.style.left = x0 + "px";
+    box.style.top = y0 + "px";
     host.appendChild(box);
     const size = box.querySelector("b");
     el.classList.add(media ? "drawing-media" : "drawing");
-    const dur = 420 + Math.min(520, (W + H) / 3);
+    const dur = 240 + Math.min(300, (W + H) / 5);
     await tween(
       dur,
       (e) => {
         const w = W * e, h = H * e;
-        box.style.cssText = `left:${x0}px;top:${y0}px;width:${w}px;height:${h}px`;
+        box.style.width = w + "px";
+        box.style.height = h + "px";
         size.textContent = `${Math.round(w)} × ${Math.round(h)}`;
         pos(c, x0 + w, y0 + h);
         if (!media) el.style.clipPath = `inset(0 ${W - w}px ${H - h}px 0)`;
@@ -443,9 +449,9 @@
 
     // 4. cursor leaves
     const ex = x0 + W + 60 + Math.random() * 160, ey = y0 + H + 30 + Math.random() * 90;
-    await wait(120);
+    await wait(60);
     await tween(
-      380,
+      240,
       (e) => {
         pos(c, x0 + W + (ex - x0 - W) * e, y0 + H + (ey - y0 - H) * e);
         c.style.opacity = 1 - e;
@@ -532,19 +538,139 @@
         c.style.transition = `transform ${t + Math.random() * 0.4}s cubic-bezier(.3,.7,.3,1)`;
         pos(c, innerWidth * (0.08 + Math.random() * 0.84), innerHeight * (0.12 + Math.random() * 0.76));
       });
-    await wait(60);
-    scatter(0.7);
-    await wait(800);
+    await wait(40);
+    scatter(0.45);
+    await wait(450);
     if (skipped) return;
     document.body.classList.add("rulers");
     drawGuides();
-    scatter(0.5);
-    await wait(700);
+    scatter(0.35);
+    await wait(420);
     if (skipped) return;
     leaveSwarm();
     startBuilding();
-    await wait(3600);
+    await wait(2600);
     if (!skipped) endIntro();
+  }
+
+  // ---------- Loading screen: words blur in, camera zooms, a hand clicks, then "You found him|" ----------
+  async function runLoader() {
+    const el = document.getElementById("loader");
+    if (!el) return;
+    const L = D.loader || {};
+    if (L.enabled === false || reduceMotion) return el.remove();
+
+    const stage = el.querySelector(".ld-stage");
+    const line = el.querySelector(".ld-line");
+    const hand = el.querySelector(".ld-hand");
+    el.querySelector(".ld-handle .mono").textContent = L.handle || "";
+    if (!L.handle) el.querySelector(".ld-handle").remove();
+
+    let skip = false;
+    const doSkip = () => (skip = true);
+    el.querySelector(".ld-skip").addEventListener("click", doSkip);
+    const onKey = (e) => ["Escape", "Enter", " "].includes(e.key) && doSkip();
+    addEventListener("keydown", onKey);
+    // waits that end early when the visitor skips
+    const sleep = async (ms) => {
+      const end = performance.now() + ms;
+      while (!skip && performance.now() < end) await wait(Math.min(40, end - performance.now()));
+    };
+
+    const words = (text) => {
+      line.replaceChildren(...String(text).trim().split(/\s+/).map((w) => Object.assign(document.createElement("span"), { className: "w", textContent: w })));
+      return [...line.children];
+    };
+    // camera move: scale the stage and pull the focus word toward the centre, with a touch of motion blur
+    let cur = "translate3d(0,0,0) scale(1)";
+    const zoom = async (scale, focus, dur, pull = 0.75) => {
+      let dx = 0, dy = 0;
+      if (focus) {
+        const cx = stage.offsetWidth / 2, cy = stage.offsetHeight / 2;
+        dx = -(focus.offsetLeft + focus.offsetWidth / 2 - cx) * scale * pull;
+        dy = -(focus.offsetTop + focus.offsetHeight / 2 - cy) * scale * pull;
+      }
+      const to = `translate3d(${dx}px, ${dy}px, 0) scale(${scale})`;
+      if (!dur) {
+        stage.style.transform = cur = to;
+        return;
+      }
+      const a = stage.animate(
+        [{ transform: cur, filter: "blur(0px)" }, { filter: "blur(2.5px)", offset: 0.5 }, { transform: to, filter: "blur(0px)" }],
+        { duration: dur, easing: "cubic-bezier(.7,0,.2,1)", fill: "forwards" }
+      );
+      await a.finished.catch(() => {});
+      stage.style.transform = cur = to;
+      a.cancel();
+    };
+    const moveHand = (x, y, dur, ease = "cubic-bezier(.2,.8,.2,1)") => {
+      const from = hand.style.transform || `translate3d(${innerWidth * 0.8}px, ${innerHeight * 1.05}px, 0)`;
+      const to = `translate3d(${x}px, ${y}px, 0)`;
+      hand.style.opacity = 1;
+      const a = hand.animate([{ transform: from }, { transform: to }], { duration: dur, easing: ease, fill: "forwards" });
+      return a.finished.catch(() => {}).then(() => {
+        hand.style.transform = to;
+        a.cancel();
+      });
+    };
+
+    el.classList.add("on");
+    await Promise.race([document.fonts ? document.fonts.ready : null, wait(900)]);
+    await sleep(380);
+
+    // 1) "Tired of generic websites?" — word by word, zoom to the last word, hand clicks it
+    const w1 = words(L.line1 || "Tired of generic websites?");
+    for (const w of w1) {
+      if (skip) break;
+      w.classList.add("in");
+      await sleep(230);
+    }
+    const target = w1[w1.length - 1];
+    if (!skip) await zoom(2.3, target, 620);
+    if (!skip) {
+      const r = target.getBoundingClientRect();
+      await moveHand(r.left + r.width * 0.55, r.top + r.height * 0.6, 520);
+      hand.classList.add("press");
+      target.classList.add("hit");
+      await sleep(200);
+      hand.classList.remove("press");
+      await sleep(180);
+    }
+
+    // 2) second line appears small, the hand leaves, the camera pushes in
+    if (!skip && L.line2 !== "") {
+      await zoom(1, null, 0);
+      const w2 = words(L.line2 || "Looking for a developer who designs?");
+      moveHand(innerWidth * 0.15, innerHeight * 1.1, 520, "cubic-bezier(.5,0,.75,0)");
+      for (const w of w2) {
+        if (skip) break;
+        w.classList.add("in");
+        await sleep(45);
+      }
+      await sleep(380);
+      if (!skip) await zoom(1.7, w2[Math.floor(w2.length / 2)], 900, 0.3);
+    }
+
+    // 3) typewriter, big, then the camera pulls back
+    if (!skip) {
+      hand.style.opacity = 0;
+      await zoom(1.9, null, 0);
+      const text = L.line3 || "You found him.";
+      const span = document.createElement("span");
+      const caret = Object.assign(document.createElement("i"), { className: "ld-caret" });
+      line.replaceChildren(span, caret);
+      for (let i = 1; i <= text.length && !skip; i++) {
+        span.textContent = text.slice(0, i);
+        await sleep(text[i - 1] === " " ? 40 : 75);
+      }
+      await sleep(420);
+      if (!skip) await zoom(1, null, 650);
+      await sleep(250);
+    }
+
+    removeEventListener("keydown", onKey);
+    el.classList.add("done");
+    setTimeout(() => el.remove(), 700);
   }
 
   function leaveSwarm() {
@@ -571,12 +697,47 @@
     endIntro();
   });
 
+  // ---------- Smooth scrolling (Lenis) ----------
+  let lenis = null;
+  if (!reduceMotion && typeof Lenis === "function") {
+    lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 1, smoothWheel: true });
+    const raf = (t) => {
+      lenis.raf(t);
+      requestAnimationFrame(raf);
+    };
+    requestAnimationFrame(raf);
+    lenis.stop(); // stays locked until the intro hands over
+    // in-page links glide instead of jumping
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute("href");
+      const target = id === "#top" ? 0 : id.length > 1 && document.querySelector(id);
+      if (target === false || target === null) return;
+      e.preventDefault();
+      lenis.scrollTo(target, { offset: target === 0 ? 0 : -64, duration: 1.4 });
+    });
+  }
+  const lockScroll = (on) => lenis && (on ? lenis.stop() : lenis.start());
+  // pause smooth scrolling while a popup (website viewer / video player) is open
+  document.querySelectorAll("dialog").forEach((d) => {
+    d.setAttribute("data-lenis-prevent", "");
+    d.addEventListener("close", () => lockScroll(false));
+    new MutationObserver(() => d.open && lockScroll(true)).observe(d, { attributes: true, attributeFilter: ["open"] });
+  });
+  const _startBuilding = startBuilding;
+  startBuilding = () => {
+    _startBuilding();
+    lockScroll(false);
+  };
+
   if (reduceMotion) {
+    document.getElementById("loader")?.remove();
     document.querySelectorAll(".b").forEach((el) => reveal(el));
     skipBtn.remove();
     startBuilding();
   } else {
-    runIntro();
+    runLoader().then(runIntro);
   }
 
 

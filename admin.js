@@ -486,6 +486,17 @@
       ],
     },
     {
+      id: "loader", label: "Loading screen", icon: "⏳", anchor: "#top", obj: "loader",
+      note: "The short animation before the site appears. The last word of line 1 gets “clicked”. The preview skips it — check it on the live site.",
+      fields: [
+        T("enabled", "Show the loading screen", { type: "toggle" }),
+        T("line1", "Line 1 (words appear one by one)"),
+        T("line2", "Line 2", { hint: "Leave empty to skip this line." }),
+        T("line3", "Line 3 (typed out, big)"),
+        T("handle", "Handle (top right)", { placeholder: "@yourname" }),
+      ],
+    },
+    {
       id: "stats", label: "Hero stats", icon: "📊", anchor: "#top",
       note: "The three numbers under the hero.",
       list: {
