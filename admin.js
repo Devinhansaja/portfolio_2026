@@ -74,6 +74,7 @@
   };
   let gh = store.get(S_KEY) || { owner: "", repo: "", branch: "main", dir: "", token: "" };
   let ghOk = false; // true once we've loaded content from GitHub successfully
+  let ghError = ""; // last GitHub error, shown so problems are easy to fix
   // "server": live site with /api login (GitHub details come from the server, kept in memory only)
   // "local":  no /api (e.g. a local test server) — GitHub token is entered by hand in Publish settings
   let mode = "local";
@@ -671,7 +672,43 @@
       return h(
         "div",
         {},
-        h("div", { class: ghOk ? "okbox" : "warn", text: ghOk ? `Signed in. Publishing to ${gh.owner}/${gh.repo} (${gh.branch || "main"}); Vercel updates the site after each Publish.` : "Signed in, but the content couldn't be loaded from GitHub. Check GITHUB_TOKEN and GITHUB_REPO in Vercel." }),
+        ghOk
+          ? h("div", { class: "okbox", text: `Signed in. Publishing to ${gh.owner}/${gh.repo} (${gh.branch || "main"}); Vercel updates the site after each Publish.` })
+          : h(
+              "div",
+              { class: "warn" },
+              h("b", { text: "Signed in, but GitHub didn't accept the connection." }),
+              h("div", { style: "margin:6px 0 8px;font-family:var(--mono);font-size:12px", text: ghError || "No details." }),
+              h(
+                "ul",
+                { style: "margin-left:18px;display:grid;gap:4px" },
+                h("li", { text: "401 / Bad credentials → GITHUB_TOKEN is wrong, deleted or still the placeholder text. Make a new token and replace it in Vercel." }),
+                h("li", { text: "403 / Resource not accessible → the token needs Repository access to this repo and Contents: Read and write." }),
+                h("li", { text: `404 / Not Found → check GITHUB_REPO is exactly ${gh.owner || "owner"}/${gh.repo || "repo"} and the token can see that repo.` }),
+                h("li", { text: "After changing anything in Vercel: Deployments → ⋯ → Redeploy, then sign in again." })
+              ),
+              h("button", {
+                type: "button", class: "primary", style: "margin-top:10px", text: "Try again",
+                onClick: async () => {
+                  try {
+                    busy(true, "Connecting to GitHub…");
+                    const keep = dirty ? data : null; // don't lose edits made while disconnected
+                    await loadFromGitHub();
+                    if (keep) data = keep;
+                    ghError = "";
+                    updateStatus();
+                    render();
+                    refreshPreview(true);
+                    toast("Connected to GitHub.");
+                  } catch (e) {
+                    ghError = e.message;
+                    render();
+                  } finally {
+                    busy(false);
+                  }
+                },
+              })
+            ),
         h(
           "div",
           { class: "card" },
@@ -763,13 +800,17 @@
         on
           ? `GitHub: ${gh.owner}/${gh.repo} (${gh.branch || "main"})`
           : mode === "server"
-          ? "Couldn't reach GitHub — check GITHUB_TOKEN / GITHUB_REPO in Vercel"
+          ? `GitHub not connected — ${ghError ? ghError.replace(/^GitHub error /, "") : "open Publish settings"}`
           : "Not connected — open Publish settings",
         dirty ? h("span", { class: "dirty", text: `● Unpublished changes${pending.size ? ` · ${pending.size} new file(s)` : ""}` }) : null,
       ].filter(Boolean)
     );
     $("#btn-publish").disabled = !(on && dirty);
-    $("#btn-publish").title = on ? "Save all changes to the live site" : "Connect GitHub in Publish settings first";
+    $("#btn-publish").title = on
+      ? "Save all changes to the live site"
+      : mode === "server"
+      ? "GitHub isn't connected — open Publish settings to see why"
+      : "Connect GitHub in Publish settings first";
   }
 
   // ---------- Change tracking, draft, preview ----------
@@ -1011,7 +1052,9 @@
         await loadFromGitHub();
       } catch (e) {
         ghOk = false;
-        toast(`Could not load from GitHub — showing the local copy. ${e.message}`, "error", 12000);
+        ghError = e.message;
+        toast(`Could not load from GitHub — showing the site's current content. ${e.message}`, "error", 12000);
+        if (mode === "server") current = "settings"; // open the page that explains the error
       } finally {
         busy(false);
       }
