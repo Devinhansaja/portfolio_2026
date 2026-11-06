@@ -1,4 +1,4 @@
-// POST /api/login  { email, password, code } -> sets the admin session cookie
+// POST /api/login  { email, password } -> sets the admin session cookie
 const A = require("../lib/auth");
 
 module.exports = async (req, res) => {
@@ -9,16 +9,15 @@ module.exports = async (req, res) => {
   const ip = A.clientIp(req);
   if (A.tooMany(ip)) return A.send(res, 429, { error: "Too many wrong attempts. Try again in 15 minutes." });
 
-  const { email, password, code } = await A.readJson(req);
-  // check all three every time so the response time doesn't reveal which one was wrong
+  const { email, password } = await A.readJson(req);
+  // check both every time so the response time doesn't reveal which one was wrong
   const okEmail = A.safeEqual(String(email || "").trim().toLowerCase(), A.env("ADMIN_EMAIL").toLowerCase());
   const okPass = A.verifyPassword(password || "", A.env("ADMIN_PASSWORD_HASH"));
-  const okCode = A.verifyTotp(code, A.env("ADMIN_TOTP_SECRET"));
 
-  if (!(okEmail && okPass && okCode)) {
+  if (!(okEmail && okPass)) {
     A.recordFail(ip);
     await new Promise((r) => setTimeout(r, 700));
-    return A.send(res, 401, { error: "Email, password or code is wrong." });
+    return A.send(res, 401, { error: "Email or password is wrong." });
   }
   A.setSession(res);
   return A.send(res, 200, { ok: true });

@@ -32,11 +32,6 @@
         <h1 class="auth-title">Sign in</h1>
         <div class="field"><label for="l-email">Email</label><input id="l-email" type="email" autocomplete="username" required /></div>
         <div class="field"><label for="l-pass">Password</label><input id="l-pass" type="password" autocomplete="current-password" required /></div>
-        <div class="field">
-          <label for="l-code">Authenticator code</label>
-          <input id="l-code" inputmode="numeric" pattern="[0-9 ]{6,7}" maxlength="7" autocomplete="one-time-code" placeholder="123 456" required />
-          <p class="hint">The 6-digit code from Google / Microsoft Authenticator.</p>
-        </div>
         <p class="auth-error" id="l-error" role="alert"></p>
         <button type="submit" class="primary wide" id="l-submit">Sign in</button>
       </form>

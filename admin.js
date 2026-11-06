@@ -679,7 +679,7 @@
           h(
             "ul",
             { class: "steps" },
-            h("li", {}, h("b", { text: "Change password or authenticator: " }), "delete ADMIN_PASSWORD_HASH and ADMIN_TOTP_SECRET in Vercel and redeploy — this page then shows the setup wizard again. Everyone gets logged out."),
+            h("li", {}, h("b", { text: "Change password: " }), "delete ADMIN_PASSWORD_HASH in Vercel and redeploy — this page then shows the setup wizard again. Everyone gets logged out."),
             h("li", {}, h("b", { text: "New GitHub token: " }), "replace GITHUB_TOKEN and redeploy."),
             h("li", {}, "Sessions last 12 hours.")
           ),
@@ -869,62 +869,23 @@
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: $("#l-email").value, password: $("#l-pass").value, code: $("#l-code").value }),
+        body: JSON.stringify({ email: $("#l-email").value, password: $("#l-pass").value }),
       });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || `Login failed (${r.status}).`);
-      $("#l-pass").value = $("#l-code").value = "";
+      $("#l-pass").value = "";
       await boot();
     } catch (ex) {
       err.textContent = ex.message;
-      $("#l-code").value = "";
-      $("#l-code").focus();
+      $("#l-pass").select();
     } finally {
       $("#l-submit").disabled = false;
     }
   });
 
   // ---------- First-time setup wizard (runs only in this browser; nothing is sent anywhere) ----------
-  const B32 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-  function base32(bytes) {
-    let bits = 0, val = 0, out = "";
-    for (const b of bytes) {
-      val = (val << 8) | b;
-      bits += 8;
-      while (bits >= 5) {
-        out += B32[(val >>> (bits - 5)) & 31];
-        bits -= 5;
-      }
-    }
-    if (bits > 0) out += B32[(val << (5 - bits)) & 31];
-    return out;
-  }
-  function unbase32(s) {
-    let bits = 0, val = 0;
-    const out = [];
-    for (const c of s) {
-      val = (val << 5) | B32.indexOf(c);
-      bits += 5;
-      if (bits >= 8) {
-        out.push((val >>> (bits - 8)) & 255);
-        bits -= 8;
-      }
-    }
-    return new Uint8Array(out);
-  }
   const toB64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
   const rand = (n) => crypto.getRandomValues(new Uint8Array(n));
-  async function totpNow(secret, offset = 0) {
-    const counter = Math.floor(Date.now() / 30000) + offset;
-    const msg = new Uint8Array(8);
-    new DataView(msg.buffer).setUint32(4, counter);
-    new DataView(msg.buffer).setUint32(0, Math.floor(counter / 2 ** 32));
-    const key = await crypto.subtle.importKey("raw", unbase32(secret), { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
-    const h2 = new Uint8Array(await crypto.subtle.sign("HMAC", key, msg));
-    const o = h2[h2.length - 1] & 15;
-    const n = ((h2[o] & 127) << 24) | (h2[o + 1] << 16) | (h2[o + 2] << 8) | h2[o + 3];
-    return String(n % 1e6).padStart(6, "0");
-  }
   async function hashPassword(pw) {
     const iter = 210000;
     const salt = rand(16);
@@ -932,10 +893,6 @@
     const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: iter, hash: "SHA-256" }, key, 256);
     return `pbkdf2$${iter}$${toB64(salt)}$${toB64(bits)}`;
   }
-  const loadQr = () =>
-    window.qrcode
-      ? Promise.resolve()
-      : new Promise((res, rej) => document.head.append(h("script", { src: "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js", onLoad: res, onError: rej })));
 
   function showSetup(missingKeys) {
     $("#auth").hidden = false;
@@ -950,82 +907,42 @@
     const out = h("div");
     box.replaceChildren(
       ...[
-      h("h1", { class: "auth-title", text: "Set up admin login" }),
-      h("p", { class: "sec-note", text: `The login isn't set up on this site yet (missing in Vercel: ${missingKeys.join(", ")}). This wizard creates the values — everything happens in this browser and nothing is sent anywhere.` }),
-      onlyGithub
-        ? h("div", { class: "warn", text: "Only the GitHub settings are missing. Add GITHUB_TOKEN and GITHUB_REPO in Vercel (see step 4 below), then redeploy." })
-        : null,
-      h("p", { class: "step-h" }, h("span", { text: "1" }), "Choose your login"),
-      f("s-email", "Admin email", "email", { value: "devinhansaja100@gmail.com", autocomplete: "username" }),
-      h("div", { class: "row2" }, f("s-pass", "Password (min 10 characters)", "password", { autocomplete: "new-password" }), f("s-pass2", "Repeat password", "password", { autocomplete: "new-password" })),
-      f("s-repo", "GitHub repository (owner/name)", "text", { value: "Devinhansaja/portfolio_2026" }),
-      err,
-      h("button", {
-        type: "button", class: "primary wide", text: "Next: set up the authenticator",
-        onClick: async () => {
-          err.textContent = "";
-          const email = $("#s-email").value.trim(), pw = $("#s-pass").value, pw2 = $("#s-pass2").value, repo = $("#s-repo").value.trim();
-          if (!/^\S+@\S+\.\S+$/.test(email)) return (err.textContent = "Enter a valid email.");
-          if (pw.length < 10) return (err.textContent = "Use a password of at least 10 characters.");
-          if (pw !== pw2) return (err.textContent = "The passwords don't match.");
-          if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return (err.textContent = "Repository should look like owner/name.");
-          busy(true, "Creating your keys…");
-          try {
-            const secret = base32(rand(20));
-            const vals = { email, repo, hash: await hashPassword(pw), secret, session: toB64(rand(32)) };
-            await loadQr();
-            renderTotpStep(out, vals);
-          } catch (ex) {
-            err.textContent = "Couldn't create the keys: " + ex.message;
-          } finally {
-            busy(false);
-          }
-        },
-      }),
-      out,
+        h("h1", { class: "auth-title", text: "Set up admin login" }),
+        h("p", { class: "sec-note", text: `The login isn't set up on this site yet (missing in Vercel: ${missingKeys.join(", ")}). This wizard creates the values — everything happens in this browser and nothing is sent anywhere.` }),
+        onlyGithub ? h("div", { class: "warn", text: "Only the GitHub settings are missing. Add GITHUB_TOKEN and GITHUB_REPO in Vercel (see step 2 below), then redeploy." }) : null,
+        h("p", { class: "step-h" }, h("span", { text: "1" }), "Choose your login"),
+        f("s-email", "Admin email", "email", { value: "devinhansaja100@gmail.com", autocomplete: "username" }),
+        h("div", { class: "row2" }, f("s-pass", "Password (min 10 characters)", "password", { autocomplete: "new-password" }), f("s-pass2", "Repeat password", "password", { autocomplete: "new-password" })),
+        f("s-repo", "GitHub repository (owner/name)", "text", { value: "Devinhansaja/portfolio_2026" }),
+        err,
+        h("button", {
+          type: "button", class: "primary wide", text: "Create login values",
+          onClick: async () => {
+            err.textContent = "";
+            const email = $("#s-email").value.trim(), pw = $("#s-pass").value, pw2 = $("#s-pass2").value, repo = $("#s-repo").value.trim();
+            if (!/^\S+@\S+\.\S+$/.test(email)) return (err.textContent = "Enter a valid email.");
+            if (pw.length < 10) return (err.textContent = "Use a password of at least 10 characters.");
+            if (pw !== pw2) return (err.textContent = "The passwords don't match.");
+            if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return (err.textContent = "Repository should look like owner/name.");
+            busy(true, "Creating your login values…");
+            try {
+              renderEnvStep(out, { email, repo, hash: await hashPassword(pw), session: toB64(rand(32)) });
+            } catch (ex) {
+              err.textContent = "Couldn't create the values: " + ex.message;
+            } finally {
+              busy(false);
+            }
+          },
+        }),
+        out,
       ].filter(Boolean)
     );
-  }
-
-  function renderTotpStep(out, v) {
-    const label = encodeURIComponent(`Portfolio Admin:${v.email}`);
-    const uri = `otpauth://totp/${label}?secret=${v.secret}&issuer=${encodeURIComponent("Portfolio Admin")}&algorithm=SHA1&digits=6&period=30`;
-    const qr = window.qrcode(0, "M");
-    qr.addData(uri);
-    qr.make();
-    const qrBox = h("div", { class: "qr" });
-    qrBox.innerHTML = qr.createSvgTag(4, 2); // SVG built by the QR library from our own string
-    const err = h("p", { class: "auth-error", role: "alert" });
-    const code = h("input", { id: "s-code", inputmode: "numeric", maxlength: "7", placeholder: "123 456", autocomplete: "one-time-code" });
-    const envOut = h("div");
-    out.replaceChildren(
-      h("p", { class: "step-h" }, h("span", { text: "2" }), "Scan with Google / Microsoft Authenticator"),
-      qrBox,
-      h("p", { class: "hint", text: "Can't scan? Add an account by key and type this:" }),
-      h("div", { class: "secret", text: v.secret.replace(/(.{4})/g, "$1 ").trim() }),
-      h("p", { class: "step-h" }, h("span", { text: "3" }), "Type the 6-digit code from the app"),
-      h("div", { class: "field" }, code),
-      err,
-      h("button", {
-        type: "button", class: "primary wide", text: "Check code",
-        onClick: async () => {
-          const c = code.value.replace(/\s/g, "");
-          const ok = (await Promise.all([-1, 0, 1].map((d) => totpNow(v.secret, d)))).includes(c);
-          if (!ok) return (err.textContent = "That code doesn't match. Check the phone's time is automatic and try the newest code.");
-          err.textContent = "";
-          renderEnvStep(envOut, v);
-        },
-      }),
-      envOut
-    );
-    code.focus();
   }
 
   function renderEnvStep(out, v) {
     const vars = [
       ["ADMIN_EMAIL", v.email],
       ["ADMIN_PASSWORD_HASH", v.hash],
-      ["ADMIN_TOTP_SECRET", v.secret],
       ["SESSION_SECRET", v.session],
       ["GITHUB_REPO", v.repo],
       ["GITHUB_BRANCH", "main"],
@@ -1033,15 +950,14 @@
     ];
     const text = vars.map(([k, val]) => `${k}=${val}`).join("\n");
     out.replaceChildren(
-      h("div", { class: "okbox", text: "Authenticator works. Keep the app — you'll need a code every time you sign in." }),
-      h("p", { class: "step-h" }, h("span", { text: "4" }), "Add these in Vercel"),
+      h("p", { class: "step-h" }, h("span", { text: "2" }), "Add these in Vercel"),
       h(
         "ol",
         { class: "steps" },
         h("li", {}, "Vercel → your project → ", h("b", { text: "Settings → Environment Variables" }), "."),
-        h("li", {}, "Add each line below as a variable (name on the left of =, value on the right). Tip: Vercel lets you paste the whole block at once."),
+        h("li", {}, "Add each line below as a variable (name on the left of =, value on the right) and tick ", h("b", { text: "Production" }), ". Tip: Vercel lets you paste the whole block at once."),
         h("li", {}, "For ", h("b", { text: "GITHUB_TOKEN" }), " use a ", h("a", { href: "https://github.com/settings/personal-access-tokens/new", target: "_blank", rel: "noopener", text: "fine-grained token ↗" }), " with access to only this repo and ", h("b", { text: "Contents: Read and write" }), "."),
-        h("li", {}, "Open ", h("b", { text: "Deployments" }), " → ⋯ on the latest one → ", h("b", { text: "Redeploy" }), ". Then reload this page and sign in.")
+        h("li", {}, h("b", { text: "Save" }), ", then ", h("b", { text: "Deployments" }), " → ⋯ on the latest one → ", h("b", { text: "Redeploy" }), ". Reload this page and sign in with your email and password.")
       ),
       h("div", { class: "envbox", text }),
       h("div", { class: "warn", text: "These values are secret. Don't share them, post them, or commit them to GitHub. This page won't show them again after you reload." }),
