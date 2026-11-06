@@ -19,8 +19,31 @@
       <button type="button" class="ghost" id="btn-preview" title="Show or hide the live preview">Preview</button>
       <button type="button" class="ghost" id="btn-download" title="Download data.js (text only)">Download</button>
       <button type="button" class="primary" id="btn-publish" disabled>Publish</button>
+      <button type="button" class="ghost" id="btn-logout" hidden>Log out</button>
     </div>
   </header>
+
+  <!-- Login / first-time setup (shown on the live site before the editor) -->
+  <div id="auth" hidden>
+    <div class="auth-card">
+      <div class="brand">ADMIN<b>.</b> <span class="mono">portfolio editor</span></div>
+
+      <form id="login-form" hidden autocomplete="on">
+        <h1 class="auth-title">Sign in</h1>
+        <div class="field"><label for="l-email">Email</label><input id="l-email" type="email" autocomplete="username" required /></div>
+        <div class="field"><label for="l-pass">Password</label><input id="l-pass" type="password" autocomplete="current-password" required /></div>
+        <div class="field">
+          <label for="l-code">Authenticator code</label>
+          <input id="l-code" inputmode="numeric" pattern="[0-9 ]{6,7}" maxlength="7" autocomplete="one-time-code" placeholder="123 456" required />
+          <p class="hint">The 6-digit code from Google / Microsoft Authenticator.</p>
+        </div>
+        <p class="auth-error" id="l-error" role="alert"></p>
+        <button type="submit" class="primary wide" id="l-submit">Sign in</button>
+      </form>
+
+      <div id="setup" hidden></div>
+    </div>
+  </div>
 
   <div class="layout">
     <nav id="nav" aria-label="Sections"></nav>
