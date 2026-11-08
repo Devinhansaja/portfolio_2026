@@ -571,14 +571,19 @@
     },
     {
       id: "photoshoots", label: "Photoshoots", icon: "📷", anchor: ".shoots-sec",
-      note: "Facebook posts shown in a sideways strip. Paste the post link — or Facebook's whole embed code (Post → ⋯ → Embed). Shown only while the Photography gallery is empty.",
+      note: "Each shoot is a frame on the site whose photos change by themselves. Upload the shoot's best photos (they're resized automatically). Shown only while the Photography gallery is empty.",
       list: {
-        key: "photoshoots", singular: "post", title: (p) => p.title || "Facebook post",
-        make: () => ({ title: "", url: "", height: 700 }),
+        key: "photoshoots", singular: "shoot", title: (s) => s.title, thumb: (s) => s.photos && s.photos[0] && (s.photos[0].src || s.photos[0]),
+        make: () => ({ title: "New shoot", category: "", url: "", photos: [] }),
         fields: [
-          T("title", "Name (for you)", { placeholder: "Wedding — Leshika & Chathura" }),
-          T("url", "Facebook post link or embed code", { type: "textarea", rows: 3 }),
-          T("height", "Post height", { type: "number", hint: "How tall the post is at 500px wide. 700 fits most posts; make it bigger if the bottom is cut off." }),
+          T("title", "Shoot name", { placeholder: "Wedding — Leshika & Chathura" }),
+          T("category", "Type", { placeholder: "Portrait shoot / Event coverage / Wedding" }),
+          T("url", "Facebook post link", { type: "url", placeholder: "https://www.facebook.com/…", hint: "Optional. Adds a “Facebook ↗” link under the frame." }),
+          T("photos", "Photos", {
+            type: "list", singular: "Photo", thumb: (p) => p.src,
+            make: () => ({ src: "" }),
+            fields: [T("src", "Photo", { type: "image", maxW: 1600 })],
+          }),
         ],
       },
     },

@@ -324,15 +324,32 @@ h2 { font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--display); letter-spacing: .01e
 .pv-close { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; padding: 0; border-radius: 50%; background: rgba(0,0,0,.55); font-size: 14px; z-index: 1; }
 .pv-prev:hover, .pv-next:hover, .pv-close:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ---------- Photoshoots (Facebook posts in a sideways strip) ---------- */
-.shoots-side { display: grid; gap: 16px; justify-items: start; max-width: 400px; }
-.shoots-ctl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.shoots-ctl button { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg2); color: var(--text); font-size: 17px; cursor: pointer; transition: border-color .2s, color .2s; }
-.shoots-ctl button:hover { border-color: var(--accent); color: var(--accent); }
-.shoots-ctl a { margin-left: 6px; font-size: 13px; font-weight: 600; color: var(--accent); }
-.shoot-strip { --s: .84; display: flex; align-items: flex-start; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; padding-bottom: 12px; }
-.shoot { flex: none; width: calc(500px * var(--s)); height: calc(var(--h) * 1px * var(--s)); overflow: hidden; border-radius: 14px; border: 1px solid var(--line); background: #fff; scroll-snap-align: start; transition: opacity .45s ease; }
-.shoot iframe { display: block; width: 500px; height: calc(var(--h) * 1px); border: 0; transform: scale(var(--s)); transform-origin: 0 0; }
+/* ---------- Photoshoots: same-size frames whose photos change by themselves ---------- */
+.shoots-side { display: grid; gap: 14px; justify-items: start; max-width: 400px; }
+.shoots-link { font-size: 13px; font-weight: 600; color: var(--accent); }
+.shoot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 18px; }
+.shoot { display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--bg2); transition: opacity .45s ease, border-color .3s, transform .3s; }
+.shoot.built:hover { border-color: var(--accent); transform: translateY(-4px); }
+.shoot-frame { position: relative; display: block; width: 100%; aspect-ratio: 4/5; padding: 0; border: 0; overflow: hidden; background: #000; cursor: zoom-in; }
+.shoot-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; opacity: 0; transform: scale(1.08); transition: opacity 1s ease, transform 5s ease-out; }
+.shoot-frame img.on { opacity: 1; transform: scale(1); }
+.shoot-frame::after { content: ""; position: absolute; inset: 60% 0 0; background: linear-gradient(transparent, rgba(3,4,7,.6)); pointer-events: none; }
+.shoot-count { position: absolute; top: 12px; left: 12px; z-index: 1; padding: 5px 9px; border-radius: 5px; background: rgba(0,0,0,.6); color: #fff; font-size: 10px; backdrop-filter: blur(6px); }
+.shoot-dots { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 1; display: flex; gap: 4px; }
+.shoot-dots i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,.3); transition: background .4s; }
+.shoot-dots i.on { background: var(--accent); }
+.shoot-info { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; }
+.shoot-info strong { display: block; font-size: 14px; line-height: 1.3; }
+.shoot-info .mono { display: block; margin-top: 4px; font-size: 10px; color: var(--mute); }
+.shoot-info a { flex: none; font-size: 13px; font-weight: 600; color: var(--accent); }
+@media (max-width: 720px) {
+  .shoot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .shoot-info { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 12px; }
+  .shoot-info strong { font-size: 13px; }
+  .shoot-info a { font-size: 12px; }
+  .shoot-count { top: 8px; left: 8px; }
+  .shoot-dots { left: 8px; right: 8px; bottom: 8px; gap: 3px; }
+}
 
 /* ---------- Facebook pages ---------- */
 /* every card is the same size */

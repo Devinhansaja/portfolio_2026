@@ -153,6 +153,15 @@
     return /^https:\/\/(www\.|web\.|m\.)?facebook\.com\//.test(u) ? u : "";
   }
 
+  // Photoshoots: each one is a frame whose photos change by themselves
+  const shoots = D.photoshoots
+    .map((s) => ({
+      ...s,
+      href: fbPostHref(s.url),
+      photos: (Array.isArray(s.photos) ? s.photos : []).map((p) => (typeof p === "string" ? p : p && p.src)).filter(Boolean),
+    }))
+    .filter((s) => s.photos.length);
+
   // ---------- Client logos: a strip that keeps moving from left to right ----------
   function clientStrip() {
     const list = D.clients
@@ -299,7 +308,7 @@
   </section>` : ""}
 
   <!-- PHOTOSHOOTS (Facebook posts) -->
-  ${!D.photos.length && D.photoshoots.length ? `
+  ${!D.photos.length && shoots.length ? `
   <section class="section shoots-sec" id="photos">
     <div class="sec-head">
       <div>
@@ -307,23 +316,24 @@
         <h2 class="b">PHOTO<em>SHOOTS.</em></h2>
       </div>
       <div class="shoots-side">
-        <p class="sec-note b">Shoots by Focus Photography — portraits, events and fashion. Swipe through, or open a post on Facebook to see every photo.</p>
-        <div class="shoots-ctl b">
-          <button class="sh-prev" type="button" aria-label="Previous posts">←</button>
-          <button class="sh-next" type="button" aria-label="Next posts">→</button>
-          ${D.photoLink ? `<a href="${esc(D.photoLink)}" target="_blank" rel="noopener">See all on Facebook ↗</a>` : ""}
-        </div>
+        <p class="sec-note b">Shoots by Focus Photography — portraits, lifestyle and events. Click a frame to see every photo.</p>
+        ${D.photoLink ? `<a class="shoots-link b" href="${esc(D.photoLink)}" target="_blank" rel="noopener">See all on Facebook ↗</a>` : ""}
       </div>
     </div>
-    <div class="shoot-strip">
-      ${D.photoshoots
-        .map((p) => ({ ...p, href: fbPostHref(p.url) }))
-        .filter((p) => p.href)
+    <div class="shoot-grid">
+      ${shoots
         .map(
-          (p) => `<div class="shoot b" style="--h:${Math.max(300, +p.height || 700)}">
-        <iframe src="https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(p.href)}&show_text=true&width=500"
-          title="${esc(p.title || "Photoshoot")} on Facebook" loading="lazy" scrolling="no" allow="encrypted-media; clipboard-write; picture-in-picture; web-share"></iframe>
-      </div>`
+          (s, i) => `<article class="shoot b">
+        <button class="shoot-frame" type="button" data-i="${i}" aria-label="See the ${esc(s.title)} photos">
+          ${s.photos.map((p, j) => `<img src="${esc(p)}" alt="" loading="lazy"${j === 0 ? ' class="on"' : ""} />`).join("")}
+          <span class="shoot-count mono">${s.photos.length} photos</span>
+          ${s.photos.length > 1 ? `<span class="shoot-dots" aria-hidden="true">${s.photos.map((_, j) => `<i${j === 0 ? ' class="on"' : ""}></i>`).join("")}</span>` : ""}
+        </button>
+        <div class="shoot-info">
+          <div><strong>${esc(s.title)}</strong>${s.category ? `<span class="mono">${esc(s.category)}</span>` : ""}</div>
+          ${s.href ? `<a href="${esc(s.href)}" target="_blank" rel="noopener">Facebook ↗</a>` : ""}
+        </div>
+      </article>`
         )
         .join("")}
     </div>
@@ -554,7 +564,7 @@
     ["h2", "Writing heading"], [".sec-note", "Writing text"], [".filters", "Adding filters"],
     [".card", "Adding project"], [".reel", "Adding reel"], [".yt-head h3", "Writing heading"],
     [".yt-series", "Adding link"], [".yt-card", "Embedding video"], [".fb-card", "Adding page"],
-    [".logo-marquee", "Adding client logos"], [".shoot", "Embedding post"], [".shoots-ctl", "Adding buttons"], [".film-card", "Placing film"], [".cmp-tabs", "Adding tabs"], [".compare", "Placing slider"],
+    [".logo-marquee", "Adding client logos"], [".shoot", "Placing photoshoot"], [".shoots-link", "Adding link"], [".film-card", "Placing film"], [".cmp-tabs", "Adding tabs"], [".compare", "Placing slider"],
     [".cmp-caption", "Adding link"], [".col h4", "Adding title"], [".edu", "Adding education"],
     [".tags", "Adding tags"], [".step", "Adding step"], [".quote", "Adding quote"],
     [".wins", "Writing tagline"], [".tl-item", "Adding experience"], [".ct-rows li", "Adding contact"],
@@ -1041,45 +1051,62 @@
     });
   }
 
-  // ---------- Photography lightbox ----------
+  // ---------- Photo lightbox (gallery and photoshoots) ----------
   const phViewer = document.getElementById("photo-viewer");
-  if (phViewer && D.photos.length) {
-    let pi = 0;
-    const img = phViewer.querySelector("img");
-    const showPhoto = (i) => {
-      pi = (i + D.photos.length) % D.photos.length;
-      const ph = D.photos[pi];
-      img.src = ph.src;
-      img.alt = ph.caption || "Photo";
-      phViewer.querySelector(".pv-cap").textContent = [ph.category, ph.caption].filter(Boolean).join(" — ");
-      phViewer.querySelector(".pv-count").textContent = `${pi + 1} / ${D.photos.length}`;
-    };
-    document.querySelectorAll(".photo-tile").forEach((b) =>
-      b.addEventListener("click", () => {
-        showPhoto(+b.dataset.i);
-        phViewer.showModal();
-      })
-    );
-    phViewer.querySelector(".pv-prev").addEventListener("click", () => showPhoto(pi - 1));
-    phViewer.querySelector(".pv-next").addEventListener("click", () => showPhoto(pi + 1));
-    phViewer.querySelector(".pv-close").addEventListener("click", () => phViewer.close());
-    phViewer.addEventListener("click", (e) => e.target === phViewer && phViewer.close());
-    phViewer.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") showPhoto(pi - 1);
-      if (e.key === "ArrowRight") showPhoto(pi + 1);
-    });
+  let pvList = [], pi = 0;
+  const pvImg = phViewer.querySelector("img");
+  function showPhoto(i) {
+    pi = (i + pvList.length) % pvList.length;
+    const ph = pvList[pi];
+    pvImg.src = ph.src;
+    pvImg.alt = ph.caption || "Photo";
+    phViewer.querySelector(".pv-cap").textContent = ph.caption || "";
+    phViewer.querySelector(".pv-count").textContent = `${pi + 1} / ${pvList.length}`;
   }
+  function openPhotos(list, i = 0) {
+    pvList = list;
+    showPhoto(i);
+    phViewer.showModal();
+  }
+  phViewer.querySelector(".pv-prev").addEventListener("click", () => showPhoto(pi - 1));
+  phViewer.querySelector(".pv-next").addEventListener("click", () => showPhoto(pi + 1));
+  phViewer.querySelector(".pv-close").addEventListener("click", () => phViewer.close());
+  phViewer.addEventListener("click", (e) => e.target === phViewer && phViewer.close());
+  phViewer.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") showPhoto(pi - 1);
+    if (e.key === "ArrowRight") showPhoto(pi + 1);
+  });
+  document.querySelectorAll(".photo-tile").forEach((b) =>
+    b.addEventListener("click", () =>
+      openPhotos(D.photos.map((ph) => ({ src: ph.src, caption: [ph.category, ph.caption].filter(Boolean).join(" — ") })), +b.dataset.i)
+    )
+  );
 
-  // ---------- Photoshoots: Facebook posts are 500px wide, scaled to fit the card ----------
-  const strip = document.querySelector(".shoot-strip");
-  if (strip) {
-    const fit = () => strip.style.setProperty("--s", Math.min(0.84, strip.clientWidth / 500).toFixed(3));
-    fit();
-    addEventListener("resize", fit);
-    const step = (dir) => strip.scrollBy({ left: dir * (strip.querySelector(".shoot").offsetWidth + 18), behavior: "smooth" });
-    document.querySelector(".sh-prev").addEventListener("click", () => step(-1));
-    document.querySelector(".sh-next").addEventListener("click", () => step(1));
-  }
+  // ---------- Photoshoots: each frame changes its photo every few seconds ----------
+  const frames = [...document.querySelectorAll(".shoot-frame")];
+  frames.forEach((f, n) => {
+    const s = shoots[+f.dataset.i];
+    const imgs = [...f.querySelectorAll("img")];
+    const dots = [...f.querySelectorAll(".shoot-dots i")];
+    let cur = 0, onScreen = false, hover = false;
+    const go = (k) => {
+      imgs[cur].classList.remove("on");
+      dots[cur] && dots[cur].classList.remove("on");
+      cur = (k + imgs.length) % imgs.length;
+      imgs[cur].classList.add("on");
+      dots[cur] && dots[cur].classList.add("on");
+    };
+    if (imgs.length > 1 && !reduceMotion) {
+      // frames start at different moments so they don't all change together
+      setTimeout(() => setInterval(() => onScreen && !hover && !document.hidden && go(cur + 1), 3200), n * 650);
+      new IntersectionObserver(([e]) => (onScreen = e.isIntersecting), { threshold: 0.2 }).observe(f);
+      f.addEventListener("pointerenter", () => (hover = true));
+      f.addEventListener("pointerleave", () => (hover = false));
+    }
+    f.addEventListener("click", () =>
+      openPhotos(s.photos.map((src, j) => ({ src, caption: `${s.title}${s.category ? " — " + s.category : ""}` })), cur)
+    );
+  });
 
   // ---------- Films: only one plays at a time ----------
   document.querySelectorAll(".film-card video").forEach((v) =>
