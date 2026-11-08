@@ -6,9 +6,9 @@ const PORTFOLIO = {
   fullName: "Manitha Devin Hansaja",
   firstName: "Devin",
   lastName: "Hansaja",
-  roles: ["Full Stack Developer", "Graphic Designer", "UI/UX Designer", "Photographer & Videographer"],
+  roles: ["Video Editor", "Photographer", "Social Media Manager", "Web Developer"],
   tagline:
-    "I build web and mobile apps, design brands and create content — bridging development, design and digital marketing.",
+    "I edit scroll-stopping videos, shoot photos that tell stories and grow social media pages — and I build websites too.",
   location: "Ingiriya, Sri Lanka",
   available: true,
   photo: "assets/me-photo.webp", // transparent image looks best
@@ -17,16 +17,16 @@ const PORTFOLIO = {
   // Loading screen shown before the site builds itself
   loader: {
     enabled: true,
-    line1: "Tired of generic websites?",
-    line2: "Looking for a developer who designs?",
+    line1: "Tired of boring content?",
+    line2: "Looking for an editor who tells stories?",
     line3: "You found him.",
     handle: "",
   },
 
   stats: [
     { value: 3, suffix: "+", label: "Years experience" },
+    { value: 9, suffix: "+", label: "Videos & ads edited" },
     { value: 5, suffix: "", label: "Facebook pages managed" },
-    { value: 10, suffix: "+", label: "Projects & works" },
   ],
 
   // Filter tabs are created automatically from each project's "category".
@@ -201,27 +201,37 @@ const PORTFOLIO = {
   // { period: "2022 — 2024", title: "Diploma in IT Engineering", place: "IUHS Campus, Galle" }
   education: [],
 
+  // Most important first — the first ones also lead the scrolling banner
   skills: [
-    "Web Development", "Mobile App Development", "UI/UX Design", "Graphic Design",
-    "Branding", "Social Media Creatives", "Video & AI Filmmaking", "Photography",
-    "Videography", "Social Media Marketing", "Data Entry",
+    "Video Editing", "Photography", "Social Media Management", "Videography",
+    "Video & AI Filmmaking", "Social Media Marketing", "Content Creation", "Colour Grading",
+    "Graphic Design", "Branding", "UI/UX Design", "Web Development", "Mobile App Development",
   ],
 
-  // Shown as "Tech stack & tools"
+  // Shown as "Tools I use"
   tools: [
-    "HTML", "CSS", "JavaScript", "React.js", "Java", "Kotlin", "Flutter", "PHP", "MySQL", "Firebase",
-    "VS Code", "NetBeans", "Android Studio", "Figma", "Illustrator", "Lightroom", "DaVinci Resolve",
+    "DaVinci Resolve", "Lightroom", "Adobe Apps", "Meta Business Suite", "Illustrator", "Figma",
+    "HTML", "CSS", "JavaScript", "React.js", "Kotlin", "Flutter", "PHP", "MySQL", "Firebase", "VS Code",
   ],
 
   process: [
-    { title: "The Idea", text: "Understand your goals, audience and what success looks like." },
-    { title: "The Plan", text: "Map the structure, tech stack, timeline and content." },
-    { title: "The Build", text: "Design and develop with clean code and real content." },
-    { title: "The Polish", text: "Test, optimise speed and every visual detail." },
-    { title: "The Launch", text: "Go live, measure results and keep improving." },
+    { title: "The Brief", text: "Understand the brand, the audience and the story to tell." },
+    { title: "The Plan", text: "Plan the shots, scripts, posts and content calendar." },
+    { title: "The Shoot", text: "Capture photos and video — on location, in studio or with AI." },
+    { title: "The Edit", text: "Cut, colour-grade, add motion and sound until every frame works." },
+    { title: "The Launch", text: "Publish, run the ads, read the numbers and keep growing the page." },
   ],
 
-  quote: "Bridging development, design and digital marketing — from code to content.",
+  quote: "Stories that stop the scroll — shot, edited and shared to grow your brand.",
+
+  // Photography gallery (add or change photos in the admin panel)
+  photos: [
+    { src: "assets/photos/wedding.jpg", caption: "Wedding film — Leshika & Chathura", category: "Weddings" },
+    { src: "assets/photos/portrait-fan.jpg", caption: "Portrait & fashion shoot", category: "Portraits" },
+    { src: "assets/photos/portrait-smile.jpg", caption: "Portrait & fashion shoot", category: "Portraits" },
+    { src: "assets/photos/portrait-hands.jpg", caption: "Portrait & fashion shoot", category: "Portraits" },
+  ],
+  photoLink: "https://web.facebook.com/profile.php?id=61555425576942", // "See more" link (Focus Photography)
 
   journey: [
     {

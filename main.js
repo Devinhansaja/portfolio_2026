@@ -9,7 +9,7 @@
   })();
   const D = PREVIEW || PORTFOLIO;
   // Make sure every list exists, so an empty list in the admin panel never breaks the page.
-  ["roles", "stats", "projects", "clients", "awards", "education", "skills", "tools", "process", "journey", "reels", "youtube", "pages", "compare"].forEach(
+  ["roles", "stats", "projects", "clients", "awards", "education", "skills", "tools", "process", "journey", "reels", "youtube", "pages", "compare", "photos"].forEach(
     (k) => (D[k] = Array.isArray(D[k]) ? D[k] : [])
   );
   D.contact = D.contact || {};
@@ -189,7 +189,7 @@
       <p class="hero-role b"><span id="role-rotator">${esc(D.roles[0])}</span></p>
       <p class="hero-tag b">${esc(D.tagline)}</p>
       <div class="hero-btns b">
-        <a href="#work" class="btn">View my work →</a>
+        <a href="#reels" class="btn">Watch my work →</a>
         <a href="${esc(D.cvLink)}" class="btn ghost" download>Download CV</a>
       </div>
       <p class="mono loc b">📍 ${esc(D.location)}</p>
@@ -215,7 +215,7 @@
   <section class="section reels-sec" id="reels">
     <div class="sec-head">
       <div>
-        <p class="mono label b">01 / Video & ads</p>
+        <p class="mono label b">Video editing</p>
         <h2 class="b">REELS THAT<br/><em>STOP THE SCROLL.</em></h2>
       </div>
       <p class="sec-note b">Short-form ads and promos I edited — motion graphics, AI visuals and Sinhala / English copy. Click any reel to watch it with sound.</p>
@@ -234,28 +234,35 @@
     ${D.youtube.length ? youtubeBlock() : ""}
   </section>` : ""}
 
-  <!-- WORK -->
-  <section class="section" id="work">
+  <!-- PHOTOGRAPHY -->
+  ${D.photos.length ? `
+  <section class="section photos-sec" id="photos">
     <div class="sec-head">
       <div>
-        <p class="mono label b">02 / Selected work</p>
-        <h2 class="b">WORK THAT <em>SPEAKS.</em></h2>
+        <p class="mono label b">Photography</p>
+        <h2 class="b">MOMENTS,<br/><em>FRAMED.</em></h2>
       </div>
-      <p class="sec-note b">A few projects I'm proud of — from code and campaigns to brand design, photo and video.</p>
+      <p class="sec-note b">Weddings, portraits, events and fashion — shot and edited for Focus Photography and clients. Click a photo to see it bigger.</p>
     </div>
-    <div class="filters b" role="tablist">
-      <button class="active" data-f="all">All</button>
-      ${categories.map((c) => `<button data-f="${esc(c)}">${esc(c)}</button>`).join("")}
+    <div class="ph-grid">
+      ${D.photos
+        .map(
+          (ph, i) => `<button class="ph b" type="button" data-i="${i}" aria-label="Open photo${ph.caption ? ": " + esc(ph.caption) : ""}">
+        <img src="${esc(ph.src)}" alt="${esc(ph.caption || "Photo")}" loading="lazy" />
+        ${ph.caption || ph.category ? `<span class="ph-cap">${ph.category ? `<span class="mono">${esc(ph.category)}</span>` : ""}${esc(ph.caption || "")}</span>` : ""}
+      </button>`
+        )
+        .join("")}
     </div>
-    <div class="grid">${D.projects.map(projectCard).join("")}</div>
-  </section>
+    ${D.photoLink ? `<a class="ph-more b" href="${esc(D.photoLink)}" target="_blank" rel="noopener">See more on Facebook ↗</a>` : ""}
+  </section>` : ""}
 
   <!-- FACEBOOK PAGES I MANAGE -->
   ${D.pages && D.pages.length ? `
   <section class="section pages-sec" id="pages">
     <div class="sec-head">
       <div>
-        <p class="mono label b">03 / Social media</p>
+        <p class="mono label b">Social media</p>
         <h2 class="b">PAGES I<br/><em>GROW & MANAGE.</em></h2>
       </div>
       <p class="sec-note b">Facebook pages I run — content, creatives, campaigns and community. Live previews, straight from Facebook.</p>
@@ -276,6 +283,22 @@
         .join("")}
     </div>
   </section>` : ""}
+
+  <!-- WORK -->
+  <section class="section" id="work">
+    <div class="sec-head">
+      <div>
+        <p class="mono label b">Web & design</p>
+        <h2 class="b">WEB &amp; <em>DESIGN.</em></h2>
+      </div>
+      <p class="sec-note b">Websites, apps and design work — the other side of what I do.</p>
+    </div>
+    <div class="filters b" role="tablist">
+      <button class="active" data-f="all">All</button>
+      ${categories.map((c) => `<button data-f="${esc(c)}">${esc(c)}</button>`).join("")}
+    </div>
+    <div class="grid">${D.projects.map(projectCard).join("")}</div>
+  </section>
 
   <!-- CLIENTS -->
   <section class="clients">
@@ -310,7 +333,7 @@
   <section class="section compare-sec">
     <div class="sec-head">
       <div>
-        <p class="mono label b">04 / A look under the surface</p>
+        <p class="mono label b">A look under the surface</p>
         <h2 class="b">FROM WIREFRAME.<br/><em>TO REAL.</em></h2>
       </div>
       <p class="sec-note b">Drag the handle — every site I design starts as a wireframe of boxes and lines, and ends as something people love to use.</p>
@@ -334,8 +357,8 @@
 
   <!-- ABOUT -->
   <section class="section about" id="about">
-    <p class="mono label b">05 / Behind the code</p>
-    <h2 class="b">NOT JUST CODE.<br/>IT'S HOW I <em>TELL THE STORY.</em></h2>
+    <p class="mono label b">Behind the work</p>
+    <h2 class="b">NOT JUST EDITS.<br/>IT'S HOW I <em>TELL THE STORY.</em></h2>
     <div class="about-grid">
       <div class="col">
         ${
@@ -346,7 +369,7 @@
         }
         <h4 class="mono b">Skills</h4>
         <ul class="tags big b">${D.skills.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
-        <h4 class="mono b">Tech stack & tools</h4>
+        <h4 class="mono b">Tools I use</h4>
         <ul class="tags b">${D.tools.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
       </div>
       <div class="col process">
@@ -365,7 +388,7 @@
   <section class="section journey" id="journey">
     <div class="sec-head">
       <div>
-        <p class="mono label b">06 / The journey</p>
+        <p class="mono label b">The journey</p>
         <h2 class="b">KEEP MOVING.<br/><em>KEEP BUILDING.</em></h2>
       </div>
       <div class="wins b"><strong>LITTLE WINS.</strong><strong><em>BIG DREAMS.</em></strong></div>
@@ -382,7 +405,7 @@
   <!-- CONTACT -->
   <section class="section contact" id="contact">
     <div class="ct-left">
-      <p class="mono label b">07 / Your next project</p>
+      <p class="mono label b">Your next project</p>
       <h2 class="b">LET'S WORK<br/><em>TOGETHER.</em></h2>
       <p class="sec-note b">Have an idea, a business to grow or a website to build? Tell me about it — I usually reply within 24 hours.</p>
       <ul class="ct-rows">
@@ -410,6 +433,12 @@
     <span class="mono">© ${new Date().getFullYear()} ${esc(fullName)} — built by many little cursors.</span>
     <a href="#top" class="mono">back to top ↑</a>
   </footer>`;
+
+  // Number the sections in the order they appear (01 / Video editing, 02 / Photography, ...)
+  let secNo = 0;
+  document.querySelectorAll(".section .label").forEach((l) => {
+    if (l.closest(".sec-head, .aw-left, .about, .ct-left")) l.textContent = `${pad(++secNo)} / ${l.textContent.replace(/^\d+\s*\/\s*/, "")}`;
+  });
 
 
   // ---------- Build engine: cursors arrive one after another; each builds ONE element, then leaves ----------
@@ -459,11 +488,12 @@
     [".wins", "Writing tagline"], [".tl-item", "Adding experience"], [".ct-rows li", "Adding contact"],
     [".socials", "Adding socials"], [".ct-form", "Building form"], [".aw-list li", "Adding award"],
     [".aw-count", "Adding counter"], [".marquee", "Adding banner"],
+    [".ph", "Placing photo"], [".ph-more", "Adding link"],
   ];
   const describe = (el) => (ACTIONS.find(([sel]) => el.matches(sel)) || [, "Building"])[1];
 
   // Elements that first appear as a grey placeholder box, then the real content fades in
-  const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card, .yt-card";
+  const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card, .yt-card, .ph";
   const drawLayer = document.getElementById("draw-layer");
   let colorIdx = 0;
 
@@ -605,7 +635,7 @@
 
   async function runIntro() {
     document.body.classList.add("designing");
-    const SETUP_JOBS = ["Setting up grid", "Adding guides", "Planning layout", "Picking colours", "Loading fonts"];
+    const SETUP_JOBS = ["Opening timeline", "Colour grading", "Picking music", "Adding captions", "Syncing the cut"];
     for (let i = 0; i < 14; i++) {
       const c = makeCursor(i, i % 3 === 0, i % 4 === 0 ? "arrow" : "cross");
       const lab = c.querySelector("span");
@@ -936,6 +966,35 @@
       rv.removeAttribute("src");
       rv.load();
       visible.forEach(playCard); // resume the on-screen previews
+    });
+  }
+
+  // ---------- Photography lightbox ----------
+  const phViewer = document.getElementById("photo-viewer");
+  if (phViewer && D.photos.length) {
+    let pi = 0;
+    const img = phViewer.querySelector("img");
+    const showPhoto = (i) => {
+      pi = (i + D.photos.length) % D.photos.length;
+      const ph = D.photos[pi];
+      img.src = ph.src;
+      img.alt = ph.caption || "Photo";
+      phViewer.querySelector(".pv-cap").textContent = [ph.category, ph.caption].filter(Boolean).join(" — ");
+      phViewer.querySelector(".pv-count").textContent = `${pi + 1} / ${D.photos.length}`;
+    };
+    document.querySelectorAll(".ph").forEach((b) =>
+      b.addEventListener("click", () => {
+        showPhoto(+b.dataset.i);
+        phViewer.showModal();
+      })
+    );
+    phViewer.querySelector(".pv-prev").addEventListener("click", () => showPhoto(pi - 1));
+    phViewer.querySelector(".pv-next").addEventListener("click", () => showPhoto(pi + 1));
+    phViewer.querySelector(".pv-close").addEventListener("click", () => phViewer.close());
+    phViewer.addEventListener("click", (e) => e.target === phViewer && phViewer.close());
+    phViewer.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") showPhoto(pi - 1);
+      if (e.key === "ArrowRight") showPhoto(pi + 1);
     });
   }
 

@@ -539,7 +539,32 @@
       },
     },
     {
-      id: "projects", label: "Projects", icon: "🗂️", anchor: "#work",
+      id: "photos", label: "Photography", icon: "📸", anchor: "#photos",
+      note: "The photo gallery. Upload your best shots — they're resized automatically. Visitors can click a photo to see it big. Leave the list empty to hide the section.",
+      fields: [
+        T("photos", "Photos", {
+          type: "list", singular: "photo", title: (ph) => ph.caption || ph.category, thumb: (ph) => ph.src,
+          make: () => ({ src: "", caption: "", category: "" }),
+          fields: [
+            T("src", "Photo", { type: "image", maxW: 1800 }),
+            T("caption", "Caption", { placeholder: "Wedding — Leshika & Chathura" }),
+            T("category", "Category", { placeholder: "Weddings / Portraits / Events / Fashion" }),
+          ],
+        }),
+        T("photoLink", "“See more” link", { type: "url", placeholder: "https://www.facebook.com/…", hint: "Shown under the gallery, e.g. your Focus Photography page. Leave empty to hide." }),
+      ],
+    },
+    {
+      id: "pages", label: "Facebook pages", icon: "📘", anchor: "#pages",
+      note: "Pages you manage. Facebook shows the cover, name and followers automatically.",
+      list: {
+        key: "pages", singular: "page", title: (p) => p.name,
+        make: () => ({ name: "", url: "" }),
+        fields: [T("name", "Page name"), T("url", "Facebook page link", { type: "url", placeholder: "https://www.facebook.com/…" })],
+      },
+    },
+    {
+      id: "projects", label: "Web & design", icon: "🗂️", anchor: "#work",
       note: "Cards in “Work that speaks”. Filter tabs are made automatically from the categories.",
       list: {
         key: "projects", singular: "project", title: (p) => p.title, thumb: (p) => p.image,
@@ -562,15 +587,6 @@
       },
     },
     {
-      id: "pages", label: "Facebook pages", icon: "📘", anchor: "#pages",
-      note: "Pages you manage. Facebook shows the cover, name and followers automatically.",
-      list: {
-        key: "pages", singular: "page", title: (p) => p.name,
-        make: () => ({ name: "", url: "" }),
-        fields: [T("name", "Page name"), T("url", "Facebook page link", { type: "url", placeholder: "https://www.facebook.com/…" })],
-      },
-    },
-    {
       id: "compare", label: "Wireframe slider", icon: "🪄", anchor: ".compare-sec",
       note: "“From wireframe to real”. Use two images of the same size. Add more than one to get tabs. Leave empty to hide the section.",
       list: {
@@ -587,7 +603,7 @@
     { id: "clients", label: "Clients", icon: "🤝", anchor: ".clients", note: "Names in the “Been part of the bigger picture” row.", fields: [T("clients", "Client names", { type: "tags" })] },
     {
       id: "skills", label: "Skills & tools", icon: "🧰", anchor: "#about",
-      fields: [T("skills", "Skills", { type: "tags", hint: "Also used in the scrolling banner under the hero." }), T("tools", "Tech stack & tools", { type: "tags" })],
+      fields: [T("skills", "Skills", { type: "tags", hint: "Put the most important first — they also lead the scrolling banner under the hero." }), T("tools", "Tools I use", { type: "tags" })],
     },
     {
       id: "process", label: "Process steps", icon: "🔢", anchor: "#about",
