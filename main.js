@@ -485,6 +485,8 @@
       <p class="mono label b">Your next project</p>
       <h2 class="b">LET'S WORK<br/><em>TOGETHER.</em></h2>
       <p class="sec-note b">Have an idea, a business to grow or a website to build? Tell me about it — I usually reply within 24 hours.</p>
+    </div>
+    <div class="ct-right">
       <ul class="ct-rows">
         <li class="b"><span class="mono">Email</span><a href="mailto:${esc(D.contact.email)}">${esc(D.contact.email)}</a></li>
         <li class="b"><span class="mono">Phone</span><a href="tel:${esc(D.contact.phone.replace(/\s/g, ""))}">${esc(D.contact.phone)}</a></li>
@@ -493,15 +495,6 @@
       </ul>
       <div class="socials b">${D.contact.socials.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join("")}</div>
     </div>
-    <form class="ct-form b" id="ct-form">
-      <label>Name<input name="name" required autocomplete="name" /></label>
-      <label>Email<input name="email" type="email" required autocomplete="email" /></label>
-      <label>Project type
-        <select name="type"><option>Website / Web App</option><option>Mobile App</option><option>UI/UX Design</option><option>Graphic Design / Branding</option><option>Photo & Video</option><option>Social Media Marketing</option><option>Other</option></select>
-      </label>
-      <label>Message<textarea name="msg" rows="4" required></textarea></label>
-      <button class="btn" type="submit">Send message →</button>
-    </form>
   </section>
 
   <footer class="foot">
@@ -565,7 +558,7 @@
     [".cmp-caption", "Adding link"], [".col h4", "Adding title"], [".edu", "Adding education"],
     [".tags", "Adding tags"], [".step", "Adding step"], [".quote", "Adding quote"],
     [".wins", "Writing tagline"], [".tl-item", "Adding experience"], [".ct-rows li", "Adding contact"],
-    [".socials", "Adding socials"], [".ct-form", "Building form"], [".aw-list li", "Adding award"],
+    [".socials", "Adding socials"], [".aw-list li", "Adding award"],
     [".aw-count", "Adding counter"], [".marquee", "Adding banner"],
     [".photo-tile", "Placing photo"], [".photo-more", "Adding link"],
   ];
@@ -945,27 +938,6 @@
       }, 300);
     }, 2600);
 
-  // ---------- Project grid: the last card stretches so a row is never half empty ----------
-  const projGrid = document.querySelector("#work .grid");
-  function fillLastRow() {
-    if (!projGrid) return;
-    const items = [...projGrid.children].filter((c) => !c.hidden);
-    items.forEach((c) => {
-      c.style.gridColumn = "";
-      c.classList.remove("wide");
-    });
-    const cols = getComputedStyle(projGrid).gridTemplateColumns.split(" ").filter(Boolean).length;
-    const rem = items.length % cols;
-    if (cols > 1 && rem) {
-      const last = items[items.length - 1];
-      last.style.gridColumn = `span ${cols - rem + 1}`;
-      last.classList.add("wide");
-    }
-  }
-  fillLastRow();
-  if (projGrid) new ResizeObserver(fillLastRow).observe(projGrid);
-  addEventListener("resize", fillLastRow);
-
   // ---------- Filters ----------
   const btns = document.querySelectorAll(".filters button");
   btns.forEach((b) =>
@@ -981,7 +953,6 @@
           requestAnimationFrame(() => enqueue(card));
         }
       });
-      fillLastRow();
     })
   );
 
@@ -1179,15 +1150,6 @@
       })
     );
   }
-
-  // ---------- Contact form -> opens email app ----------
-  document.getElementById("ct-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const f = new FormData(e.target);
-    const subject = `${f.get("type")} enquiry from ${f.get("name")}`;
-    const body = `${f.get("msg")}\n\n— ${f.get("name")} (${f.get("email")})`;
-    location.href = `mailto:${D.contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  });
 
   // ---------- Hero spotlight follows the mouse ----------
   const hero = document.querySelector(".hero");

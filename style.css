@@ -179,13 +179,7 @@ h2 { font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--display); letter-spacing: .01e
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 22px; }
 .card { background: var(--bg2); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; transition: opacity .55s ease, transform .4s cubic-bezier(.2,.8,.2,1), filter .55s, border-color .3s, outline-color .4s; }
 .card.built:hover { transform: translateY(-6px); border-color: var(--c); }
-.card[hidden] { display: none; }
-/* the last card stretches to fill an unfinished row: picture left, text right */
-.card.wide { flex-direction: row; }
-.card.wide .thumb { flex: 0 0 min(58%, 760px); aspect-ratio: auto; min-height: 340px; }
-.card.wide .thumb > img { position: absolute; inset: 0; }
-.card.wide .card-body { justify-content: center; padding: 28px 30px; }
-.thumb { position: relative; aspect-ratio: 16/10; overflow: hidden; background: radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--c) 35%, transparent), transparent 60%), var(--bg3); }
+.card[hidden] { display: none; }.thumb { position: relative; aspect-ratio: 16/10; overflow: hidden; background: radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--c) 35%, transparent), transparent 60%), var(--bg3); }
 .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform .6s; }
 .card:hover .thumb img, .card:hover .mock { transform: scale(1.04); }
 /* Live website preview inside a card */
@@ -291,7 +285,7 @@ h2 { font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--display); letter-spacing: .01e
 .yt-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 56px 0 18px; }
 .yt-head h3 { font: 400 clamp(28px, 3.4vw, 44px)/1 var(--display); text-transform: uppercase; letter-spacing: .01em; }
 .yt-series { flex: none; font-size: 13px; font-weight: 600; color: var(--accent); }
-.yt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 18px; }
+.yt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 18px; }
 .yt-card, .film-card { background: var(--bg2); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; transition: opacity .45s ease, border-color .3s, transform .3s; }
 .yt-card.built:hover { border-color: #ff3b3b; transform: translateY(-4px); }
 .yt-thumb { position: relative; display: block; width: 100%; aspect-ratio: 16/9; padding: 0; border: 0; background: #000; cursor: pointer; overflow: hidden; }
@@ -341,9 +335,9 @@ h2 { font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--display); letter-spacing: .01e
 .shoot iframe { display: block; width: 500px; height: calc(var(--h) * 1px); border: 0; transform: scale(var(--s)); transform-origin: 0 0; }
 
 /* ---------- Facebook pages ---------- */
-/* cards grow to fill each row, so the last row never leaves a gap */
-.fb-grid { display: flex; flex-wrap: wrap; gap: 18px; }
-.fb-card { flex: 1 1 210px; min-width: 0; background: var(--bg2); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; color: inherit; transition: opacity .45s ease, border-color .3s, transform .3s; }
+/* every card is the same size */
+.fb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 18px; }
+.fb-card { min-width: 0; background: var(--bg2); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; color: inherit; transition: opacity .45s ease, border-color .3s, transform .3s; }
 .fb-card.built:hover { border-color: var(--primary-hi); transform: translateY(-4px); }
 /* the page logo, sitting on a blurred copy of itself */
 .fb-cover { position: relative; height: 190px; display: grid; place-items: center; overflow: hidden; background: linear-gradient(160deg, var(--primary), #0b1630); }
@@ -378,7 +372,7 @@ h2 { font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--display); letter-spacing: .01e
 }
 
 /* ---------- Films (landscape) ---------- */
-.film-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 18px; }
+.film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 18px; }
 .film-card.built:hover { border-color: var(--accent); }
 .film-card video { display: block; width: 100%; aspect-ratio: 16/9; background: #000; object-fit: cover; }
 
@@ -458,11 +452,8 @@ img.cmp-layer, .cmp-layer img { display: block; width: 100%; height: 100%; objec
 .socials { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
 .socials a { border: 1px solid var(--line); padding: 8px 14px; border-radius: 99px; font-size: 13px; }
 .socials a:hover { border-color: var(--accent); color: var(--accent); }
-.ct-form { background: var(--bg2); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: grid; gap: 16px; }
-.ct-form label { display: grid; gap: 6px; font: 500 12px var(--mono); text-transform: uppercase; color: var(--mute); }
-.ct-form input, .ct-form select, .ct-form textarea { font: 15px var(--body); color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; outline: none; transition: border-color .2s; resize: vertical; }
-.ct-form input:focus, .ct-form select:focus, .ct-form textarea:focus { border-color: var(--primary); }
-.ct-form .btn { justify-content: center; }
+.ct-right { align-self: end; }
+.ct-rows li:first-child { border-top: 1px solid var(--line); }
 
 .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 28px var(--pad); border-top: 1px solid var(--line); }
 
@@ -504,9 +495,6 @@ img.cmp-layer, .cmp-layer img { display: block; width: 100%; height: 100%; objec
   .tl-top { flex-wrap: wrap; gap: 12px; }
   .tl-logo { width: 44px; height: 44px; }
   .tl-item .when { order: -1; flex-basis: 100%; align-self: auto; width: max-content; }
-  .card.wide { flex-direction: column; }
-  .card.wide .thumb { flex: none; aspect-ratio: 16/10; min-height: 0; }
-  .card.wide .thumb > img { position: static; }
   .ct-rows li { grid-template-columns: 90px 1fr; font-size: 14px; word-break: break-word; }
 }
 @media (prefers-reduced-motion: reduce) {
