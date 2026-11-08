@@ -526,6 +526,21 @@
       },
     },
     {
+      id: "films", label: "Wedding films", icon: "🎞️", anchor: ".film-grid",
+      note: "Landscape (16:9) videos shown under the reels, played right on the page. Leave the list empty to hide them.",
+      list: {
+        key: "films", singular: "film", title: (f) => f.title, thumb: (f) => f.poster,
+        make: () => ({ title: "New film", client: "", length: "", video: "", poster: "" }),
+        fields: [
+          T("title", "Title"),
+          T("client", "Client / brand"),
+          T("video", "Video file", { type: "video", accept: "video/mp4,video/webm,video/quicktime", posterKey: "poster", lengthKey: "length" }),
+          T("poster", "Cover image", { type: "image", maxW: 1280 }),
+          T("length", "Length", { placeholder: "4:20" }),
+        ],
+      },
+    },
+    {
       id: "youtube", label: "YouTube videos", icon: "▶️", anchor: ".yt-head",
       note: "Long-form videos shown under the reels. Paste a normal YouTube link — the thumbnail appears automatically. If the link has a playlist, a “Full series” link is added.",
       list: {
@@ -600,7 +615,15 @@
         ],
       },
     },
-    { id: "clients", label: "Clients", icon: "🤝", anchor: ".clients", note: "Names in the “Been part of the bigger picture” row.", fields: [T("clients", "Client names", { type: "tags" })] },
+    {
+      id: "clients", label: "Clients", icon: "🤝", anchor: ".clients",
+      note: "Logos in the “Been part of the bigger picture” strip, which keeps moving left to right. Square logos look best.",
+      list: {
+        key: "clients", singular: "client", title: (c) => c.name, thumb: (c) => c.logo,
+        make: () => ({ name: "", logo: "" }),
+        fields: [T("name", "Company name"), T("logo", "Logo", { type: "image", maxW: 300 })],
+      },
+    },
     {
       id: "skills", label: "Skills & tools", icon: "🧰", anchor: "#about",
       fields: [T("skills", "Skills", { type: "tags", hint: "Put the most important first — they also lead the scrolling banner under the hero." }), T("tools", "Tools I use", { type: "tags" })],
@@ -674,6 +697,8 @@
     if (s.custom) kids.push(s.custom());
     else if (s.list) {
       if (!Array.isArray(data[s.list.key])) data[s.list.key] = [];
+      // older data kept client names as plain text
+      if (s.list.key === "clients") data.clients = data.clients.map((c) => (typeof c === "string" ? { name: c, logo: "" } : c));
       kids.push(listEditor(s.list, data[s.list.key], s.id));
     } else {
       const target = s.obj ? (data[s.obj] = data[s.obj] || {}) : data;

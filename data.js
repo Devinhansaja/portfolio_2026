@@ -134,22 +134,13 @@ const PORTFOLIO = {
       imagePos: "center 70%",
       color: "#1558C9",
     },
-    {
-      title: "Nextera Team — Interface Design",
-      category: "UI/UX",
-      year: "",
-      role: "Member & UI/UX Designer",
-      description: "Designing user interfaces and user flows as part of the Nextera team.",
-      tags: ["UI/UX Design", "Web", "Mobile"],
-      live: "",
-      github: "",
-      image: "",
-      color: "#D4FF24",
-    },
   ],
 
   // Reels / video ads section (vertical 9:16 videos). Files live in assets/reels/
   reels: [
+    { title: "MAS — Sri Pada Clean-up 2026", client: "MAS Bodyline", length: "3:42", video: "assets/reels/mas-sripada-cleanup.mp4", poster: "assets/reels/mas-sripada-cleanup.jpg" },
+    { title: "The Dark — AI Film, Part 1", client: "AI video", length: "1:21", video: "assets/reels/ai-the-dark.mp4", poster: "assets/reels/ai-the-dark.jpg" },
+    { title: "MAS — Honouring the Craft", client: "MAS Bodyline", length: "0:21", video: "assets/reels/mas-exhibition.mp4", poster: "assets/reels/mas-exhibition.jpg" },
     { title: "Elite Home Care — Service Ad", client: "Elite Home Care Nursing", length: "0:41", video: "assets/reels/elite-service-ad.mp4", poster: "assets/reels/elite-service-ad.jpg" },
     { title: "Elite Home Care — Brand Ad", client: "Elite Home Care Nursing", length: "0:42", video: "assets/reels/elite-brand-ad.mp4", poster: "assets/reels/elite-brand-ad.jpg" },
     { title: "Taxi App — Investor Pitch", client: "Taxi App", length: "1:01", video: "assets/reels/taxi-app-ad.mp4", poster: "assets/reels/taxi-app-ad.jpg" },
@@ -157,6 +148,12 @@ const PORTFOLIO = {
     { title: "PTE Solution — Course Promo", client: "PTE Solution", length: "1:22", video: "assets/reels/pte-course-promo.mp4", poster: "assets/reels/pte-course-promo.jpg" },
     { title: "PTE Solution — Student Ad", client: "PTE Solution", length: "1:42", video: "assets/reels/pte-student-ad.mp4", poster: "assets/reels/pte-student-ad.jpg" },
     { title: "PTE Tips — Repeat Sentences", client: "PTE Solution", length: "0:29", video: "assets/reels/pte-repeat-sentences.mp4", poster: "assets/reels/pte-repeat-sentences.jpg" },
+  ],
+
+  // Landscape (16:9) films shown under the reels, e.g. wedding films. Files live in assets/reels/
+  films: [
+    { title: "Wedding Film — Ceremony Highlights", client: "Focus Photography", length: "4:24", video: "assets/reels/wedding-film-1.mp4", poster: "assets/reels/wedding-film-1.jpg" },
+    { title: "Wedding Film — The Celebration", client: "Focus Photography", length: "4:26", video: "assets/reels/wedding-film-2.mp4", poster: "assets/reels/wedding-film-2.jpg" },
   ],
 
   // Long-form YouTube videos (shown under the reels). Paste normal YouTube links; playlist links work too.
@@ -184,13 +181,20 @@ const PORTFOLIO = {
 
   // "From wireframe to real" slider — sketch = the wireframe, real = screenshot of the live site.
   // Both images should be the same size. Add more items to get tabs.
-  compare: [
-    { name: "Elite Home Care Nursing", url: "https://elitehomecarenursing.lk/", sketch: "assets/wireframe-elite.jpg", real: "assets/real-elite.jpg" },
-  ],
+  // The section is hidden while this list is empty. Example item:
+  // { name: "Elite Home Care Nursing", url: "https://elitehomecarenursing.lk/", sketch: "assets/wireframe-elite.jpg", real: "assets/real-elite.jpg" }
+  compare: [],
 
+  // Logos scroll from left to right in the "Been part of the bigger picture" strip. Square logos look best.
   clients: [
-    "Gloma International", "MAS Bodyline", "Upali Pooja Bhanda", "La Villa Hotel", "Elite Home Care",
-    "Russel's Catering", "Russels Dimbula Tea", "Focus Photography", "Nextera Team",
+    { name: "Gloma International", logo: "assets/clients/gloma.webp" },
+    { name: "MAS Bodyline", logo: "assets/clients/mas.webp" },
+    { name: "Upali Pooja Bhanda", logo: "assets/clients/upali.webp" },
+    { name: "La Villa Hotel", logo: "assets/clients/lavilla.webp" },
+    { name: "Elite Home Care", logo: "assets/clients/elite.webp" },
+    { name: "Russel's Catering", logo: "assets/clients/russels-catering.webp" },
+    { name: "Russels Dimbula Tea", logo: "assets/clients/russels-tea.webp" },
+    { name: "Focus Photography", logo: "assets/clients/focus.webp" },
   ],
 
   // Achievements section is hidden while this list is empty.
@@ -224,13 +228,8 @@ const PORTFOLIO = {
 
   quote: "Stories that stop the scroll — shot, edited and shared to grow your brand.",
 
-  // Photography gallery (add or change photos in the admin panel)
-  photos: [
-    { src: "assets/photos/wedding.jpg", caption: "Wedding film — Leshika & Chathura", category: "Weddings" },
-    { src: "assets/photos/portrait-fan.jpg", caption: "Portrait & fashion shoot", category: "Portraits" },
-    { src: "assets/photos/portrait-smile.jpg", caption: "Portrait & fashion shoot", category: "Portraits" },
-    { src: "assets/photos/portrait-hands.jpg", caption: "Portrait & fashion shoot", category: "Portraits" },
-  ],
+  // Photography gallery — hidden while this list is empty. Add photos in the admin panel to bring it back.
+  photos: [],
   photoLink: "https://web.facebook.com/profile.php?id=61555425576942", // "See more" link (Focus Photography)
 
   journey: [

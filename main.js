@@ -9,7 +9,7 @@
   })();
   const D = PREVIEW || PORTFOLIO;
   // Make sure every list exists, so an empty list in the admin panel never breaks the page.
-  ["roles", "stats", "projects", "clients", "awards", "education", "skills", "tools", "process", "journey", "reels", "youtube", "pages", "compare", "photos"].forEach(
+  ["roles", "stats", "projects", "clients", "awards", "education", "skills", "tools", "process", "journey", "reels", "films", "youtube", "pages", "compare", "photos"].forEach(
     (k) => (D[k] = Array.isArray(D[k]) ? D[k] : [])
   );
   D.contact = D.contact || {};
@@ -131,6 +131,38 @@
       return { id: "", list: "" };
     }
   }
+  // ---------- Landscape films (e.g. wedding films), played right in the card ----------
+  const filmsBlock = () => `
+    <div class="yt-head"><h3 class="b">Wedding <em>films</em></h3></div>
+    <div class="film-grid">
+      ${D.films
+        .map(
+          (f) => `<article class="film-card b">
+        <video src="${esc(f.video)}" poster="${esc(f.poster)}" controls playsinline preload="none"></video>
+        <div class="yt-body"><strong>${esc(f.title)}</strong><span class="mono">${esc([f.client, f.length].filter(Boolean).join(" · "))}</span></div>
+      </article>`
+        )
+        .join("")}
+    </div>`;
+
+  // ---------- Client logos: a strip that keeps moving from left to right ----------
+  function clientStrip() {
+    const list = D.clients
+      .map((c) => (typeof c === "string" ? { name: c, logo: "" } : c || {}))
+      .filter((c) => c.name || c.logo);
+    if (!list.length) return "";
+    // repeat short lists so the strip is always wider than the screen
+    let half = [...list];
+    while (half.length < 10) half = half.concat(list);
+    const item = (c, hidden) => `<span class="client"${hidden ? ' aria-hidden="true"' : ""}>
+        ${c.logo ? `<img src="${esc(c.logo)}" alt="${hidden ? "" : esc(c.name)}" loading="lazy" />` : `<i class="ini">${esc((c.name || "?").trim()[0])}</i>`}
+        ${c.name ? `<span class="nm">${esc(c.name)}</span>` : ""}
+      </span>`;
+    return `<div class="logo-marquee b" style="--dur:${half.length * 4.5}s">
+      <div class="logo-track">${half.map((c, i) => item(c, i >= list.length)).join("")}${half.map((c) => item(c, true)).join("")}</div>
+    </div>`;
+  }
+
   function youtubeBlock() {
     const vids = D.youtube.map((v) => ({ ...v, ...ytInfo(v.url) })).filter((v) => v.id || v.list);
     if (!vids.length) return "";
@@ -211,7 +243,7 @@
   </div></div>
 
   <!-- REELS / VIDEO ADS -->
-  ${D.reels.length || D.youtube.length ? `
+  ${D.reels.length || D.films.length || D.youtube.length ? `
   <section class="section reels-sec" id="reels">
     <div class="sec-head">
       <div>
@@ -231,6 +263,7 @@
         )
         .join("")}
     </div>
+    ${D.films.length ? filmsBlock() : ""}
     ${D.youtube.length ? youtubeBlock() : ""}
   </section>` : ""}
 
@@ -301,10 +334,11 @@
   </section>
 
   <!-- CLIENTS -->
+  ${D.clients.length ? `
   <section class="clients">
     <p class="mono label b">Been part of the bigger picture</p>
-    <div class="logos">${D.clients.map((c) => `<span class="b">${esc(c)}</span>`).join("")}</div>
-  </section>
+    ${clientStrip()}
+  </section>` : ""}
 
   <!-- AWARDS (only shown when data.js has an "awards" list) -->
   ${D.awards && D.awards.length ? `
@@ -417,7 +451,6 @@
       <div class="socials b">${D.contact.socials.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join("")}</div>
     </div>
     <form class="ct-form b" id="ct-form">
-      <div class="feel"><strong>MAKE IT</strong><strong><em>FEEL REAL.</em></strong></div>
       <label>Name<input name="name" required autocomplete="name" /></label>
       <label>Email<input name="email" type="email" required autocomplete="email" /></label>
       <label>Project type
@@ -433,6 +466,9 @@
     <span class="mono">© ${new Date().getFullYear()} ${esc(fullName)} — built by many little cursors.</span>
     <a href="#top" class="mono">back to top ↑</a>
   </footer>`;
+
+  // Hide the menu link of a section that isn't shown
+  if (!document.getElementById("photos")) document.querySelector('.nav-links a[href="#photos"]')?.remove();
 
   // Number the sections in the order they appear (01 / Video editing, 02 / Photography, ...)
   let secNo = 0;
@@ -482,7 +518,7 @@
     ["h2", "Writing heading"], [".sec-note", "Writing text"], [".filters", "Adding filters"],
     [".card", "Adding project"], [".reel", "Adding reel"], [".yt-head h3", "Writing heading"],
     [".yt-series", "Adding link"], [".yt-card", "Embedding video"], [".fb-card", "Embedding page"],
-    [".logos span", "Adding client"], [".cmp-tabs", "Adding tabs"], [".compare", "Placing slider"],
+    [".logo-marquee", "Adding client logos"], [".film-card", "Placing film"], [".cmp-tabs", "Adding tabs"], [".compare", "Placing slider"],
     [".cmp-caption", "Adding link"], [".col h4", "Adding title"], [".edu", "Adding education"],
     [".tags", "Adding tags"], [".step", "Adding step"], [".quote", "Adding quote"],
     [".wins", "Writing tagline"], [".tl-item", "Adding experience"], [".ct-rows li", "Adding contact"],
@@ -493,7 +529,7 @@
   const describe = (el) => (ACTIONS.find(([sel]) => el.matches(sel)) || [, "Building"])[1];
 
   // Elements that first appear as a grey placeholder box, then the real content fades in
-  const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card, .yt-card, .photo-tile";
+  const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card, .yt-card, .photo-tile, .film-card";
   const drawLayer = document.getElementById("draw-layer");
   let colorIdx = 0;
 
@@ -997,6 +1033,13 @@
       if (e.key === "ArrowRight") showPhoto(pi + 1);
     });
   }
+
+  // ---------- Films: only one plays at a time ----------
+  document.querySelectorAll(".film-card video").forEach((v) =>
+    v.addEventListener("play", () =>
+      document.querySelectorAll(".film-card video").forEach((o) => o !== v && o.pause())
+    )
+  );
 
   // ---------- YouTube: load the player only when the visitor clicks ----------
   document.querySelectorAll(".yt-thumb").forEach((b) =>
