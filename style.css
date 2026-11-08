@@ -330,6 +330,16 @@ h2 { font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--display); letter-spacing: .01e
 .pv-close { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; padding: 0; border-radius: 50%; background: rgba(0,0,0,.55); font-size: 14px; z-index: 1; }
 .pv-prev:hover, .pv-next:hover, .pv-close:hover { border-color: var(--accent); color: var(--accent); }
 
+/* ---------- Photoshoots (Facebook posts in a sideways strip) ---------- */
+.shoots-side { display: grid; gap: 16px; justify-items: start; max-width: 400px; }
+.shoots-ctl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.shoots-ctl button { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg2); color: var(--text); font-size: 17px; cursor: pointer; transition: border-color .2s, color .2s; }
+.shoots-ctl button:hover { border-color: var(--accent); color: var(--accent); }
+.shoots-ctl a { margin-left: 6px; font-size: 13px; font-weight: 600; color: var(--accent); }
+.shoot-strip { --s: .84; display: flex; align-items: flex-start; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; padding-bottom: 12px; }
+.shoot { flex: none; width: calc(500px * var(--s)); height: calc(var(--h) * 1px * var(--s)); overflow: hidden; border-radius: 14px; border: 1px solid var(--line); background: #fff; scroll-snap-align: start; transition: opacity .45s ease; }
+.shoot iframe { display: block; width: 500px; height: calc(var(--h) * 1px); border: 0; transform: scale(var(--s)); transform-origin: 0 0; }
+
 /* ---------- Facebook pages ---------- */
 /* cards grow to fill each row, so the last row never leaves a gap */
 .fb-grid { display: flex; flex-wrap: wrap; gap: 18px; }

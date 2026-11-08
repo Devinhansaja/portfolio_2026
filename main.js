@@ -9,7 +9,7 @@
   })();
   const D = PREVIEW || PORTFOLIO;
   // Make sure every list exists, so an empty list in the admin panel never breaks the page.
-  ["roles", "stats", "projects", "clients", "awards", "education", "skills", "tools", "process", "journey", "reels", "films", "youtube", "pages", "compare", "photos"].forEach(
+  ["roles", "stats", "projects", "clients", "awards", "education", "skills", "tools", "process", "journey", "reels", "films", "youtube", "pages", "compare", "photos", "photoshoots"].forEach(
     (k) => (D[k] = Array.isArray(D[k]) ? D[k] : [])
   );
   D.contact = D.contact || {};
@@ -144,6 +144,14 @@
         )
         .join("")}
     </div>`;
+
+  // Facebook post link from a normal post link, an embed link or the whole <iframe> embed code
+  function fbPostHref(u = "") {
+    u = String(u).trim();
+    const m = /plugins\/post\.php\?href=([^&"'\s]+)/.exec(u);
+    if (m) return decodeURIComponent(m[1]);
+    return /^https:\/\/(www\.|web\.|m\.)?facebook\.com\//.test(u) ? u : "";
+  }
 
   // ---------- Client logos: a strip that keeps moving from left to right ----------
   function clientStrip() {
@@ -287,6 +295,37 @@
         )
         .join("")}
       ${D.photoLink ? `<a class="photo-more b" href="${esc(D.photoLink)}" target="_blank" rel="noopener"><strong>See more</strong><span>on Facebook ↗</span></a>` : ""}
+    </div>
+  </section>` : ""}
+
+  <!-- PHOTOSHOOTS (Facebook posts) -->
+  ${!D.photos.length && D.photoshoots.length ? `
+  <section class="section shoots-sec" id="photos">
+    <div class="sec-head">
+      <div>
+        <p class="mono label b">Photography</p>
+        <h2 class="b">PHOTO<em>SHOOTS.</em></h2>
+      </div>
+      <div class="shoots-side">
+        <p class="sec-note b">Shoots by Focus Photography — portraits, events and fashion. Swipe through, or open a post on Facebook to see every photo.</p>
+        <div class="shoots-ctl b">
+          <button class="sh-prev" type="button" aria-label="Previous posts">←</button>
+          <button class="sh-next" type="button" aria-label="Next posts">→</button>
+          ${D.photoLink ? `<a href="${esc(D.photoLink)}" target="_blank" rel="noopener">See all on Facebook ↗</a>` : ""}
+        </div>
+      </div>
+    </div>
+    <div class="shoot-strip">
+      ${D.photoshoots
+        .map((p) => ({ ...p, href: fbPostHref(p.url) }))
+        .filter((p) => p.href)
+        .map(
+          (p) => `<div class="shoot b" style="--h:${Math.max(300, +p.height || 700)}">
+        <iframe src="https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(p.href)}&show_text=true&width=500"
+          title="${esc(p.title || "Photoshoot")} on Facebook" loading="lazy" scrolling="no" allow="encrypted-media; clipboard-write; picture-in-picture; web-share"></iframe>
+      </div>`
+        )
+        .join("")}
     </div>
   </section>` : ""}
 
@@ -509,7 +548,7 @@
       inFlight--;
       checkIdle();
     });
-    setTimeout(pump, 230); // the next cursor comes in a moment later
+    setTimeout(pump, 160); // the next cursor comes in a moment later
   }
 
   // What each cursor says it is doing
@@ -522,7 +561,7 @@
     ["h2", "Writing heading"], [".sec-note", "Writing text"], [".filters", "Adding filters"],
     [".card", "Adding project"], [".reel", "Adding reel"], [".yt-head h3", "Writing heading"],
     [".yt-series", "Adding link"], [".yt-card", "Embedding video"], [".fb-card", "Adding page"],
-    [".logo-marquee", "Adding client logos"], [".film-card", "Placing film"], [".cmp-tabs", "Adding tabs"], [".compare", "Placing slider"],
+    [".logo-marquee", "Adding client logos"], [".shoot", "Embedding post"], [".shoots-ctl", "Adding buttons"], [".film-card", "Placing film"], [".cmp-tabs", "Adding tabs"], [".compare", "Placing slider"],
     [".cmp-caption", "Adding link"], [".col h4", "Adding title"], [".edu", "Adding education"],
     [".tags", "Adding tags"], [".step", "Adding step"], [".quote", "Adding quote"],
     [".wins", "Writing tagline"], [".tl-item", "Adding experience"], [".ct-rows li", "Adding contact"],
@@ -533,7 +572,7 @@
   const describe = (el) => (ACTIONS.find(([sel]) => el.matches(sel)) || [, "Building"])[1];
 
   // Elements that first appear as a grey placeholder box, then the real content fades in
-  const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card, .yt-card, .photo-tile, .film-card";
+  const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card, .yt-card, .photo-tile, .film-card, .shoot";
   const drawLayer = document.getElementById("draw-layer");
   let colorIdx = 0;
 
@@ -542,7 +581,7 @@
   async function drawBuild(el) {
     if (el.classList.contains("built")) return; // already shown (e.g. intro skipped)
     const r = el.getBoundingClientRect();
-    if (reduceMotion || r.width < 2 || r.bottom < -40 || r.top > innerHeight + 40) return reveal(el);
+    if (reduceMotion || r.width < 2 || r.bottom < -40 || r.top > innerHeight + 40 || r.left > innerWidth) return reveal(el);
 
     const fixed = !!el.closest(".nav");
     const host = fixed ? layer : drawLayer;
@@ -559,7 +598,7 @@
     const sx = x0 - 70 - Math.random() * 160, sy = y0 - 50 - Math.random() * 110;
     pos(c, sx, sy);
     c.style.opacity = "0";
-    await tween(300, (e) => {
+    await tween(220, (e) => {
       pos(c, sx + (x0 - sx) * e, sy + (y0 - sy) * e);
       c.style.opacity = String(Math.min(1, e * 2.5));
     });
@@ -575,7 +614,7 @@
     const size = box.querySelector("b");
     el.classList.add(media ? "drawing-media" : "drawing");
     await tween(
-      380 + Math.min(420, (W + H) / 3.5),
+      270 + Math.min(300, (W + H) / 4.5),
       (e) => {
         const w = W * e, h = H * e;
         box.style.width = w + "px";
@@ -597,9 +636,9 @@
 
     // 4. job done — the cursor drifts away and disappears
     const ex = x0 + W + 50 + Math.random() * 120, ey = y0 + H + 30 + Math.random() * 80;
-    await wait(160);
+    await wait(110);
     await tween(
-      360,
+      260,
       (e) => {
         pos(c, x0 + W + (ex - x0 - W) * e, y0 + H + (ey - y0 - H) * e);
         c.style.opacity = String(1 - e);
@@ -1058,6 +1097,17 @@
       if (e.key === "ArrowLeft") showPhoto(pi - 1);
       if (e.key === "ArrowRight") showPhoto(pi + 1);
     });
+  }
+
+  // ---------- Photoshoots: Facebook posts are 500px wide, scaled to fit the card ----------
+  const strip = document.querySelector(".shoot-strip");
+  if (strip) {
+    const fit = () => strip.style.setProperty("--s", Math.min(0.84, strip.clientWidth / 500).toFixed(3));
+    fit();
+    addEventListener("resize", fit);
+    const step = (dir) => strip.scrollBy({ left: dir * (strip.querySelector(".shoot").offsetWidth + 18), behavior: "smooth" });
+    document.querySelector(".sh-prev").addEventListener("click", () => step(-1));
+    document.querySelector(".sh-next").addEventListener("click", () => step(1));
   }
 
   // ---------- Films: only one plays at a time ----------

@@ -230,6 +230,16 @@ const PORTFOLIO = {
 
   // Photography gallery — hidden while this list is empty. Add photos in the admin panel to bring it back.
   photos: [],
+
+  // Photoshoots: Facebook posts shown in a sideways strip (used while "photos" is empty).
+  // url = the post link (or Facebook's embed code); height = post height at 500px wide.
+  photoshoots: [
+    { title: "Gihani Madhubhashini", height: 688, url: "https://www.facebook.com/permalink.php?story_fbid=pfbid0FSk8h8iXgH8A3aQCisDQYXT7k6E86RM41S5j8vArHVvkP3RW4AcFW8onv85se4bTl&id=61555425576942" },
+    { title: "Tharushi Sandeepani", height: 772, url: "https://www.facebook.com/permalink.php?story_fbid=pfbid02WGfTRibnE6CEr3WTkxBwnxwFfHcHUpX9WricYQ6y6DWEGrR2c935S2Zhp69KfBd2l&id=61555425576942" },
+    { title: "Kavin Amarasingha", height: 666, url: "https://www.facebook.com/permalink.php?story_fbid=pfbid02qcFaGMNJRYMzqdZsCQWQZa52sQekQwAEiH2Y4hcTn1iEiutbxH5QLqzHSCziFv8Sl&id=61555425576942" },
+    { title: "Kavin Amarasingha", height: 666, url: "https://www.facebook.com/permalink.php?story_fbid=pfbid02wcXGbRaV9spmUzBdLt4E63mrABjE4hkWcErKo8PpXJ6icAba1CfH8yyX6PYngWS6l&id=61555425576942" },
+    { title: "IUHS — Vigadama", height: 700, url: "https://www.facebook.com/permalink.php?story_fbid=pfbid02eTjAdKhQdhKpjubnAefEpN9RQmzg2yYRfZE3PfNVVXSjoiB652JjHF5q53eAPXjxl&id=61555425576942" },
+  ],
   photoLink: "https://web.facebook.com/profile.php?id=61555425576942", // "See more" link (Focus Photography)
 
   journey: [

@@ -570,6 +570,19 @@
       ],
     },
     {
+      id: "photoshoots", label: "Photoshoots", icon: "📷", anchor: ".shoots-sec",
+      note: "Facebook posts shown in a sideways strip. Paste the post link — or Facebook's whole embed code (Post → ⋯ → Embed). Shown only while the Photography gallery is empty.",
+      list: {
+        key: "photoshoots", singular: "post", title: (p) => p.title || "Facebook post",
+        make: () => ({ title: "", url: "", height: 700 }),
+        fields: [
+          T("title", "Name (for you)", { placeholder: "Wedding — Leshika & Chathura" }),
+          T("url", "Facebook post link or embed code", { type: "textarea", rows: 3 }),
+          T("height", "Post height", { type: "number", hint: "How tall the post is at 500px wide. 700 fits most posts; make it bigger if the bottom is cut off." }),
+        ],
+      },
+    },
+    {
       id: "pages", label: "Facebook pages", icon: "📘", anchor: "#pages",
       note: "Pages you manage, shown as cards with the page logo. Clicking a card opens the page on Facebook.",
       list: {
