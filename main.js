@@ -76,9 +76,8 @@
   document.getElementById("nav-status").textContent = D.available ? "Available for work" : "Booked";
   document.title = `${fullName} | ${D.roles[0]}`;
 
-  // the photo gets a cinematic blue light: a glow behind, a rim on the edges and a blue grade masked to the person
   const portrait = D.photo
-    ? `<img src="${esc(D.photo)}" alt="${esc(fullName)}" /><span class="portrait-light" aria-hidden="true" style="--photo:url('${esc(D.photo)}')"></span>`
+    ? `<img src="${esc(D.photo)}" alt="${esc(fullName)}" />`
     : `<svg viewBox="0 0 400 520" class="silhouette" role="img" aria-label="Photo placeholder">
         <defs>
           <linearGradient id="rim" x1="0" x2="1"><stop offset="0" stop-color="#1558C9"/><stop offset=".45" stop-color="#0c1220"/><stop offset="1" stop-color="#D4FF24" stop-opacity=".3"/></linearGradient>

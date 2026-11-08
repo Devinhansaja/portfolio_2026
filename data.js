@@ -160,6 +160,11 @@ const PORTFOLIO = {
   // Long-form YouTube videos (shown under the reels). Paste normal YouTube links; playlist links work too.
   youtube: [
     {
+      title: "👁️අක්ෂි රෝගවලට නිවැරදි ප්‍රතිකාර මොනවාද?",
+      channel: "PROFIT TV",
+      url: "https://youtu.be/U59IeysDWNg",
+    },
+    {
       title: "🌿 නගරයක් මැද හරිතාගාර වගාවක් | City Green Agro",
       channel: "PROFIT TV",
       url: "https://youtu.be/tuF73ePpSts",
