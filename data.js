@@ -170,13 +170,13 @@ const PORTFOLIO = {
     },
   ],
 
-  // Facebook pages I manage — shown with Facebook's live page preview
+  // Facebook pages I manage — shown as cards with each page's logo
   pages: [
-    { name: "Upali Pooja Bhanda", url: "https://www.facebook.com/profile.php?id=100063587616190" },
-    { name: "Russel's Tea Services and Catering", url: "https://www.facebook.com/russelscatering" },
-    { name: "Russels Dimbula Tea and Ceylon Spices", url: "https://www.facebook.com/russelsdimbulateaandceylonspices/" },
-    { name: "Russel Francis Perera", url: "https://www.facebook.com/profile.php?id=61586921127253" },
-    { name: "ELITE Home Care Nursing", url: "https://www.facebook.com/profile.php?id=61574318894374" },
+    { name: "Upali Pooja Bhanda", url: "https://www.facebook.com/profile.php?id=100063587616190", logo: "assets/clients/upali.webp" },
+    { name: "Russel's Tea Services and Catering", url: "https://www.facebook.com/russelscatering", logo: "assets/clients/russels-catering.webp" },
+    { name: "Russels Dimbula Tea and Ceylon Spices", url: "https://www.facebook.com/russelsdimbulateaandceylonspices/", logo: "assets/clients/russels-tea.webp" },
+    { name: "Russel Francis Perera", url: "https://www.facebook.com/profile.php?id=61586921127253", logo: "assets/pages/russel-francis.webp" },
+    { name: "ELITE Home Care Nursing", url: "https://www.facebook.com/profile.php?id=61574318894374", logo: "assets/clients/elite.webp" },
   ],
 
   // "From wireframe to real" slider — sketch = the wireframe, real = screenshot of the live site.
@@ -237,30 +237,35 @@ const PORTFOLIO = {
       period: "Apr 2026 — Present",
       role: "Social Media Marketer & Developer",
       company: "Gloma International",
+      logo: "assets/clients/gloma.webp",
       text: "Plan and run social and paid campaigns that drive visibility, engagement and leads, and build the web solutions those campaigns land on.",
     },
     {
       period: "2025 — Present",
       role: "Graphic Design Intern — Branding & Communication",
       company: "MAS Bodyline (Pvt) Ltd, Agalawatta",
+      logo: "assets/clients/mas.webp",
       text: "Support branding and communication design, create visual assets to brand guidelines, and handle photography and videography.",
     },
     {
       period: "2024 — Present",
       role: "Graphic Designer (Remote)",
       company: "Upali Pooja Bhanda (Pvt) Ltd, Horana",
+      logo: "assets/clients/upali.webp",
       text: "Design digital creatives for social media and promotions, helping improve the online brand presence.",
     },
     {
       period: "2024 — 2025",
       role: "Graphic Designer & Content Creator",
       company: "La Villa Hotel, Ingiriya",
+      logo: "assets/clients/lavilla.webp",
       text: "Designed promotional posters and marketing visuals, and created digital content for hotel branding and campaigns.",
     },
     {
       period: "2024 — 2025",
       role: "Computer Operator",
       company: "Upali Pooja Bhanda (Pvt) Ltd, Horana",
+      logo: "assets/clients/upali.webp",
       text: "Handled transaction records and billing entries, verified data for error-free daily operations and supported reporting.",
     },
   ],

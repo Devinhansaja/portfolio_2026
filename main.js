@@ -298,20 +298,17 @@
         <p class="mono label b">Social media</p>
         <h2 class="b">PAGES I<br/><em>GROW & MANAGE.</em></h2>
       </div>
-      <p class="sec-note b">Facebook pages I run — content, creatives, campaigns and community. Live previews, straight from Facebook.</p>
+      <p class="sec-note b">Facebook pages I run — content, creatives, campaigns and community. Click a page to see it on Facebook.</p>
     </div>
     <div class="fb-grid">
       ${D.pages
         .map(
-          (p) => `<article class="fb-card b">
-        <div class="fb-frame">
-          <div class="fb-fallback" aria-hidden="true"><span>f</span><strong>${esc(p.name)}</strong></div>
-          <iframe src="https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(p.url)}&tabs=&width=500&height=230&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true"
-            title="${esc(p.name)} on Facebook" loading="lazy" scrolling="no" allow="encrypted-media; clipboard-write"
-            onload="this.parentElement.classList.add('loaded')"></iframe>
+          (p) => `<a class="fb-card b" href="${esc(p.url)}" target="_blank" rel="noopener">
+        <div class="fb-cover"${p.logo ? ` style="--logo:url('${esc(p.logo)}')"` : ""}>
+          <span class="fb-logo">${p.logo ? `<img src="${esc(p.logo)}" alt="${esc(p.name)} logo" loading="lazy" />` : `<i>${esc((p.name || "?").trim()[0])}</i>`}<b aria-hidden="true">f</b></span>
         </div>
-        <div class="fb-foot"><strong>${esc(p.name)}</strong><a href="${esc(p.url)}" target="_blank" rel="noopener">Open page ↗</a></div>
-      </article>`
+        <div class="fb-foot"><div><strong>${esc(p.name)}</strong><span class="mono">Facebook page</span></div><span class="fb-open">Open page ↗</span></div>
+      </a>`
         )
         .join("")}
     </div>
@@ -430,7 +427,14 @@
     <div class="timeline">
       ${D.journey
         .map(
-          (j) => `<div class="tl-item b"><span class="mono when">${esc(j.period)}</span><div><h3>${esc(j.role)}</h3><p class="mono co">${esc(j.company)}</p><p>${esc(j.text)}</p></div></div>`
+          (j) => `<div class="tl-item b">
+        <div class="tl-top">
+          ${j.logo ? `<img class="tl-logo" src="${esc(j.logo)}" alt="${esc(j.company)} logo" loading="lazy" />` : ""}
+          <div class="tl-title"><h3>${esc(j.role)}</h3><p class="mono co">${esc(j.company)}</p></div>
+          <span class="mono when">${esc(j.period)}</span>
+        </div>
+        ${j.text ? `<p class="tl-text">${esc(j.text)}</p>` : ""}
+      </div>`
         )
         .join("")}
     </div>
@@ -517,7 +521,7 @@
     [".stat", "Adding stat"], [".scroll-hint", "Adding scroll hint"], [".label", "Adding label"],
     ["h2", "Writing heading"], [".sec-note", "Writing text"], [".filters", "Adding filters"],
     [".card", "Adding project"], [".reel", "Adding reel"], [".yt-head h3", "Writing heading"],
-    [".yt-series", "Adding link"], [".yt-card", "Embedding video"], [".fb-card", "Embedding page"],
+    [".yt-series", "Adding link"], [".yt-card", "Embedding video"], [".fb-card", "Adding page"],
     [".logo-marquee", "Adding client logos"], [".film-card", "Placing film"], [".cmp-tabs", "Adding tabs"], [".compare", "Placing slider"],
     [".cmp-caption", "Adding link"], [".col h4", "Adding title"], [".edu", "Adding education"],
     [".tags", "Adding tags"], [".step", "Adding step"], [".quote", "Adding quote"],
@@ -902,6 +906,27 @@
       }, 300);
     }, 2600);
 
+  // ---------- Project grid: the last card stretches so a row is never half empty ----------
+  const projGrid = document.querySelector("#work .grid");
+  function fillLastRow() {
+    if (!projGrid) return;
+    const items = [...projGrid.children].filter((c) => !c.hidden);
+    items.forEach((c) => {
+      c.style.gridColumn = "";
+      c.classList.remove("wide");
+    });
+    const cols = getComputedStyle(projGrid).gridTemplateColumns.split(" ").filter(Boolean).length;
+    const rem = items.length % cols;
+    if (cols > 1 && rem) {
+      const last = items[items.length - 1];
+      last.style.gridColumn = `span ${cols - rem + 1}`;
+      last.classList.add("wide");
+    }
+  }
+  fillLastRow();
+  if (projGrid) new ResizeObserver(fillLastRow).observe(projGrid);
+  addEventListener("resize", fillLastRow);
+
   // ---------- Filters ----------
   const btns = document.querySelectorAll(".filters button");
   btns.forEach((b) =>
@@ -917,6 +942,7 @@
           requestAnimationFrame(() => enqueue(card));
         }
       });
+      fillLastRow();
     })
   );
 

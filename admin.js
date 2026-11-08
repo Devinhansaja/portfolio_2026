@@ -571,11 +571,15 @@
     },
     {
       id: "pages", label: "Facebook pages", icon: "📘", anchor: "#pages",
-      note: "Pages you manage. Facebook shows the cover, name and followers automatically.",
+      note: "Pages you manage, shown as cards with the page logo. Clicking a card opens the page on Facebook.",
       list: {
-        key: "pages", singular: "page", title: (p) => p.name,
-        make: () => ({ name: "", url: "" }),
-        fields: [T("name", "Page name"), T("url", "Facebook page link", { type: "url", placeholder: "https://www.facebook.com/…" })],
+        key: "pages", singular: "page", title: (p) => p.name, thumb: (p) => p.logo,
+        make: () => ({ name: "", url: "", logo: "" }),
+        fields: [
+          T("name", "Page name"),
+          T("url", "Facebook page link", { type: "url", placeholder: "https://www.facebook.com/…" }),
+          T("logo", "Page logo", { type: "image", maxW: 400, hint: "A square logo or profile picture looks best." }),
+        ],
       },
     },
     {
@@ -636,8 +640,14 @@
       id: "journey", label: "Journey", icon: "🧭", anchor: "#journey", note: "Your work experience timeline.",
       list: {
         key: "journey", singular: "role", title: (j) => [j.role, j.company].filter(Boolean).join(" — "),
-        make: () => ({ period: "", role: "", company: "", text: "" }),
-        fields: [T("period", "Period", { placeholder: "2024 — Present" }), T("role", "Job title"), T("company", "Company"), T("text", "What you did", { type: "textarea" })],
+        make: () => ({ period: "", role: "", company: "", logo: "", text: "" }),
+        fields: [
+          T("period", "Period", { placeholder: "2024 — Present" }),
+          T("role", "Job title"),
+          T("company", "Company"),
+          T("logo", "Company logo", { type: "image", maxW: 300, hint: "Optional. A square logo looks best." }),
+          T("text", "What you did", { type: "textarea" }),
+        ],
       },
     },
     {
