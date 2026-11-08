@@ -247,14 +247,14 @@
     <div class="ph-grid">
       ${D.photos
         .map(
-          (ph, i) => `<button class="ph b" type="button" data-i="${i}" aria-label="Open photo${ph.caption ? ": " + esc(ph.caption) : ""}">
+          (ph, i) => `<button class="photo-tile b" type="button" data-i="${i}" aria-label="Open photo${ph.caption ? ": " + esc(ph.caption) : ""}">
         <img src="${esc(ph.src)}" alt="${esc(ph.caption || "Photo")}" loading="lazy" />
         ${ph.caption || ph.category ? `<span class="ph-cap">${ph.category ? `<span class="mono">${esc(ph.category)}</span>` : ""}${esc(ph.caption || "")}</span>` : ""}
       </button>`
         )
         .join("")}
+      ${D.photoLink ? `<a class="photo-more b" href="${esc(D.photoLink)}" target="_blank" rel="noopener"><strong>See more</strong><span>on Facebook ↗</span></a>` : ""}
     </div>
-    ${D.photoLink ? `<a class="ph-more b" href="${esc(D.photoLink)}" target="_blank" rel="noopener">See more on Facebook ↗</a>` : ""}
   </section>` : ""}
 
   <!-- FACEBOOK PAGES I MANAGE -->
@@ -488,12 +488,12 @@
     [".wins", "Writing tagline"], [".tl-item", "Adding experience"], [".ct-rows li", "Adding contact"],
     [".socials", "Adding socials"], [".ct-form", "Building form"], [".aw-list li", "Adding award"],
     [".aw-count", "Adding counter"], [".marquee", "Adding banner"],
-    [".ph", "Placing photo"], [".ph-more", "Adding link"],
+    [".photo-tile", "Placing photo"], [".photo-more", "Adding link"],
   ];
   const describe = (el) => (ACTIONS.find(([sel]) => el.matches(sel)) || [, "Building"])[1];
 
   // Elements that first appear as a grey placeholder box, then the real content fades in
-  const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card, .yt-card, .ph";
+  const MEDIA = ".portrait, .card, .compare, .hero-bg-word, .quote, .reel, .fb-card, .yt-card, .photo-tile";
   const drawLayer = document.getElementById("draw-layer");
   let colorIdx = 0;
 
@@ -982,7 +982,7 @@
       phViewer.querySelector(".pv-cap").textContent = [ph.category, ph.caption].filter(Boolean).join(" — ");
       phViewer.querySelector(".pv-count").textContent = `${pi + 1} / ${D.photos.length}`;
     };
-    document.querySelectorAll(".ph").forEach((b) =>
+    document.querySelectorAll(".photo-tile").forEach((b) =>
       b.addEventListener("click", () => {
         showPhoto(+b.dataset.i);
         phViewer.showModal();
