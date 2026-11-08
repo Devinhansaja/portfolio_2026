@@ -45,7 +45,7 @@ const PORTFOLIO = {
       liveLabel: "Visit site",
       github: "",
       image: "assets/project-glomaint.jpg",
-      color: "#1558C9",
+      color: "#EF233C",
     },
     {
       title: "Elite Home Care Nursing",
@@ -60,7 +60,7 @@ const PORTFOLIO = {
       embed: "https://elitehomecarenursing.lk/",
       github: "",
       image: "assets/project-elite-homecare.jpg",
-      color: "#D4FF24",
+      color: "#DFE5EB",
     },
     {
       title: "GoNano — Nano Surface Protection",
@@ -75,7 +75,7 @@ const PORTFOLIO = {
       embed: "https://magic-mirror-art.lovable.app/",
       github: "",
       image: "assets/project-gonano.jpg",
-      color: "#1558C9",
+      color: "#EF233C",
     },
     {
       // glomaloan.lk blocks iframes, so this card uses a screenshot + link instead of a live embed
@@ -90,7 +90,7 @@ const PORTFOLIO = {
       liveLabel: "Visit site",
       github: "",
       image: "assets/project-glomaloan.jpg",
-      color: "#D4FF24",
+      color: "#DFE5EB",
     },
     {
       title: "Focus Photography",
@@ -104,7 +104,7 @@ const PORTFOLIO = {
       liveLabel: "View on Facebook",
       github: "",
       image: "assets/project-focus-photography.jpg",
-      color: "#1558C9",
+      color: "#EF233C",
     },
     {
       title: "Wedding Videography",
@@ -118,7 +118,7 @@ const PORTFOLIO = {
       github: "",
       image: "assets/project-wedding-video.jpg",
       imagePos: "center 75%", // which part of the image to show
-      color: "#D4FF24",
+      color: "#DFE5EB",
     },
     {
       title: "Portrait & Fashion Editing",
@@ -132,7 +132,7 @@ const PORTFOLIO = {
       github: "",
       image: "assets/project-photo-editing.jpg",
       imagePos: "center 70%",
-      color: "#1558C9",
+      color: "#EF233C",
     },
   ],
 

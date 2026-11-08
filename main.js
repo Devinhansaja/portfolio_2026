@@ -30,8 +30,8 @@
 
   // ---------- Cursor helpers ----------
   const CURSOR_NAMES = ["Design", "Code", "Ads", "Video", "UX", "SEO", "Motion", "Deploy"];
-  const CURSOR_COLORS = ["#1558C9", "#D4FF24", "#2a6ee6", "#D4FF24", "#1558C9", "#e9ffa0", "#2a6ee6", "#D4FF24"];
-  const labelText = (hex) => (/^#(D4FF24|e9ffa0)$/i.test(hex) ? "#030407" : "#fff");
+  const CURSOR_COLORS = ["#EF233C", "#DFE5EB", "#ff4a5f", "#DFE5EB", "#EF233C", "#ffffff", "#c81d33", "#DFE5EB"];
+  const labelText = (hex) => (/^#(DFE5EB|ffffff)$/i.test(hex) ? "#111217" : "#fff");
   const ARROW =
     '<svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 2.5l15 8.2-6.6 1.8-3 6.6z" fill="currentColor" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
 
@@ -80,8 +80,8 @@
     ? `<img src="${esc(D.photo)}" alt="${esc(fullName)}" />`
     : `<svg viewBox="0 0 400 520" class="silhouette" role="img" aria-label="Photo placeholder">
         <defs>
-          <linearGradient id="rim" x1="0" x2="1"><stop offset="0" stop-color="#1558C9"/><stop offset=".45" stop-color="#0c1220"/><stop offset="1" stop-color="#D4FF24" stop-opacity=".3"/></linearGradient>
-          <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#030407"/></linearGradient>
+          <linearGradient id="rim" x1="0" x2="1"><stop offset="0" stop-color="#EF233C"/><stop offset=".45" stop-color="#1d2027"/><stop offset="1" stop-color="#DFE5EB" stop-opacity=".3"/></linearGradient>
+          <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#111217"/></linearGradient>
         </defs>
         <path d="M166 220h68v100h-68z" fill="url(#rim)"/>
         <circle cx="200" cy="160" r="82" fill="url(#rim)"/>
@@ -91,7 +91,7 @@
       </svg>`;
 
   const projectCard = (p, i) => `
-    <article class="card b" data-cat="${esc(p.category)}" style="--c:${esc(p.color || (i % 2 ? "#D4FF24" : "#1558C9"))}">
+    <article class="card b" data-cat="${esc(p.category)}" style="--c:${esc(p.color || (i % 2 ? "#DFE5EB" : "#EF233C"))}">
       <div class="thumb">${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy"${p.imagePos ? ` style="object-position:${esc(p.imagePos)}"` : ""}>` : mock(p)}
         ${
           p.embed

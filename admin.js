@@ -234,8 +234,8 @@
 
   // ---------- Field editors ----------
   const COLORS = [
-    ["#1558C9", "Blue"],
-    ["#D4FF24", "Lime"],
+    ["#EF233C", "Red"],
+    ["#DFE5EB", "Silver"],
   ];
 
   function field(def, obj, ctx) {
@@ -607,7 +607,7 @@
       note: "Cards in “Work that speaks”. Filter tabs are made automatically from the categories.",
       list: {
         key: "projects", singular: "project", title: (p) => p.title, thumb: (p) => p.image,
-        make: () => ({ title: "New project", category: "Websites", year: "", role: "", description: "", tags: [], live: "", liveLabel: "Visit site", embed: "", github: "", image: "", color: "#1558C9" }),
+        make: () => ({ title: "New project", category: "Websites", year: "", role: "", description: "", tags: [], live: "", liveLabel: "Visit site", embed: "", github: "", image: "", color: "#EF233C" }),
         fields: [
           T("title", "Title"),
           T("category", "Category (filter tab)", { suggest: categories }),
