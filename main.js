@@ -1098,7 +1098,7 @@
     };
     if (imgs.length > 1 && !reduceMotion) {
       // frames start at different moments so they don't all change together
-      setTimeout(() => setInterval(() => onScreen && !hover && !document.hidden && go(cur + 1), 3200), n * 650);
+      setTimeout(() => setInterval(() => onScreen && !hover && !document.hidden && go(cur + 1), 5500), n * 1100);
       new IntersectionObserver(([e]) => (onScreen = e.isIntersecting), { threshold: 0.2 }).observe(f);
       f.addEventListener("pointerenter", () => (hover = true));
       f.addEventListener("pointerleave", () => (hover = false));
