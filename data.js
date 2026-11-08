@@ -140,6 +140,7 @@ const PORTFOLIO = {
   reels: [
     { title: "MAS — Sri Pada Clean-up 2026", client: "MAS Bodyline", length: "3:42", video: "assets/reels/mas-sripada-cleanup.mp4", poster: "assets/reels/mas-sripada-cleanup.jpg" },
     { title: "The Dark — AI Film, Part 1", client: "AI video", length: "1:21", video: "assets/reels/ai-the-dark.mp4", poster: "assets/reels/ai-the-dark.jpg" },
+    { title: "Planet Protectors — Avurudu Wish", client: "Planet Protectors", length: "0:44", video: "assets/reels/planet-protectors-avurudu.mp4", poster: "assets/reels/planet-protectors-avurudu.jpg", wide: true, focus: "45% center" },
     { title: "MAS — Honouring the Craft", client: "MAS Bodyline", length: "0:21", video: "assets/reels/mas-exhibition.mp4", poster: "assets/reels/mas-exhibition.jpg" },
     { title: "Elite Home Care — Service Ad", client: "Elite Home Care Nursing", length: "0:41", video: "assets/reels/elite-service-ad.mp4", poster: "assets/reels/elite-service-ad.jpg" },
     { title: "Elite Home Care — Brand Ad", client: "Elite Home Care Nursing", length: "0:42", video: "assets/reels/elite-brand-ad.mp4", poster: "assets/reels/elite-brand-ad.jpg" },
@@ -158,6 +159,11 @@ const PORTFOLIO = {
 
   // Long-form YouTube videos (shown under the reels). Paste normal YouTube links; playlist links work too.
   youtube: [
+    {
+      title: "🌿 නගරයක් මැද හරිතාගාර වගාවක් | City Green Agro",
+      channel: "PROFIT TV",
+      url: "https://youtu.be/tuF73ePpSts",
+    },
     {
       title: "ස්කූටරය සහ කාන්තාව | මඩ ගහන්න කලින් මේ ටිකත් හිතන්න — Episode 01",
       channel: "HER with Kalasi · ඇය වෙනුවෙන්",

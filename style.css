@@ -149,7 +149,19 @@ body:not(.designing) .intro-skip { opacity: 0; pointer-events: none; }
 .portrait { align-self: end; justify-self: center; width: min(100%, 680px, calc((100svh - 130px) * .75)); }
 .portrait img, .portrait svg { width: 100%; height: auto; }
 /* photo fades out at the bottom so the cut at the waist blends into the page */
-.portrait img { -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); }
+.portrait img { display: block; -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+  /* cinematic look: a touch more contrast and blue rim light on both edges */
+  filter: contrast(1.06) saturate(.92) drop-shadow(-4px -1px 7px rgba(80,150,255,.6)) drop-shadow(7px 0 18px rgba(30,100,230,.35)); }
+/* blue spotlight glow behind the person */
+.portrait::before { content: ""; position: absolute; inset: 4% -14% 14%; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(42,110,230,.6), rgba(21,88,201,.22) 55%, transparent 78%); filter: blur(34px); }
+/* blue light falling across the photo from both sides, only on the person */
+.portrait-light { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+  background: linear-gradient(100deg, rgba(52,125,255,.72) 0%, rgba(42,110,230,.32) 30%, rgba(42,110,230,.1) 44%, transparent 52%, transparent 62%, rgba(21,88,201,.3) 82%, rgba(90,160,255,.66) 100%),
+              radial-gradient(60% 40% at 50% 0%, rgba(120,175,255,.25), transparent 70%);
+  -webkit-mask-image: var(--photo), linear-gradient(to bottom, #000 78%, transparent 100%); mask-image: var(--photo), linear-gradient(to bottom, #000 78%, transparent 100%);
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-composite: source-in; mask-composite: intersect; }
 .hero-stats { display: grid; gap: 26px; padding-bottom: 30px; }
 .stat { border-left: 2px solid var(--primary); padding-left: 14px; }
 .stat strong { display: block; font: 400 clamp(40px, 4vw, 60px)/1 var(--display); color: var(--accent); }
@@ -273,6 +285,8 @@ h2 { font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--display); letter-spacing: .01e
 #reel-viewer { margin: auto; padding: 0; max-width: 94vw; border: 1px solid var(--line); border-radius: 14px; background: var(--bg2); color: var(--text); overflow: hidden; }
 #reel-viewer::backdrop { background: rgba(3,4,7,.86); backdrop-filter: blur(6px); }
 #reel-viewer video { display: block; height: min(72vh, 760px); aspect-ratio: 9/16; max-width: 94vw; background: #000; }
+#reel-viewer.wide video { width: min(94vw, 1100px); height: auto; max-height: 72vh; aspect-ratio: 16/9; }
+#reel-viewer.wide .rv-title { max-width: 600px; }
 .rv-bar, .rv-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; }
 .rv-bar { border-bottom: 1px solid var(--line); }
 .rv-nav { border-top: 1px solid var(--line); }

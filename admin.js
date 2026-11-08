@@ -522,6 +522,8 @@
           T("video", "Video file", { type: "video", accept: "video/mp4,video/webm,video/quicktime", posterKey: "poster", lengthKey: "length" }),
           T("poster", "Cover image", { type: "image", maxW: 720 }),
           T("length", "Length", { placeholder: "0:45" }),
+          T("wide", "Landscape (16:9) video", { type: "toggle", hint: "The card shows the middle of the video; it plays full width when clicked." }),
+          T("focus", "Part to show in the card", { type: "select", options: [["", "Middle (default)"], ["45% center", "Slightly left"], ["30% center", "Left"], ["55% center", "Slightly right"], ["70% center", "Right"]] }),
         ],
       },
     },

@@ -76,8 +76,9 @@
   document.getElementById("nav-status").textContent = D.available ? "Available for work" : "Booked";
   document.title = `${fullName} | ${D.roles[0]}`;
 
+  // the photo gets a cinematic blue light: a glow behind, a rim on the edges and a blue grade masked to the person
   const portrait = D.photo
-    ? `<img src="${esc(D.photo)}" alt="${esc(fullName)}" />`
+    ? `<img src="${esc(D.photo)}" alt="${esc(fullName)}" /><span class="portrait-light" aria-hidden="true" style="--photo:url('${esc(D.photo)}')"></span>`
     : `<svg viewBox="0 0 400 520" class="silhouette" role="img" aria-label="Photo placeholder">
         <defs>
           <linearGradient id="rim" x1="0" x2="1"><stop offset="0" stop-color="#1558C9"/><stop offset=".45" stop-color="#0c1220"/><stop offset="1" stop-color="#D4FF24" stop-opacity=".3"/></linearGradient>
@@ -273,7 +274,7 @@
       ${D.reels
         .map(
           (r, i) => `<button class="reel b" type="button" data-i="${i}" aria-label="Play ${esc(r.title)}">
-        <video src="${esc(r.video)}" poster="${esc(r.poster)}" muted loop playsinline preload="none" aria-hidden="true"></video>
+        <video src="${esc(r.video)}" poster="${esc(r.poster)}" muted loop playsinline preload="none" aria-hidden="true"${r.focus ? ` style="object-position:${esc(r.focus)}"` : ""}></video>
         <span class="reel-play" aria-hidden="true">▶</span>
         <span class="reel-info"><strong>${esc(r.title)}</strong><span class="mono">${esc(r.client)} · ${esc(r.length)}</span></span>
       </button>`
@@ -1002,6 +1003,7 @@
       const r = D.reels[cur];
       rv.poster = r.poster;
       rv.src = r.video;
+      reelViewer.classList.toggle("wide", !!r.wide); // landscape videos play full width
       reelViewer.querySelector(".rv-title").textContent = r.title;
       reelViewer.querySelector(".rv-count").textContent = `${cur + 1} / ${D.reels.length}`;
       rv.play().catch(() => {});
