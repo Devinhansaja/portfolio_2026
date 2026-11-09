@@ -153,7 +153,7 @@ const PORTFOLIO = {
     { title: "PTE Tips — Repeat Sentences", client: "PTE Solution", length: "0:29", video: "assets/reels/pte-repeat-sentences.mp4", poster: "assets/reels/pte-repeat-sentences.jpg" },
   ],
 
-  // Editing tools — logos that move left to right under the reels
+  // Editing tools — logos that move right to left under the reels
   editTools: [
     { name: "Adobe Premiere Pro", logo: "assets/tools/premiere-pro.svg" },
     { name: "After Effects", logo: "assets/tools/after-effects.svg" },
@@ -208,7 +208,7 @@ const PORTFOLIO = {
   // { name: "Elite Home Care Nursing", url: "https://elitehomecarenursing.lk/", sketch: "assets/wireframe-elite.jpg", real: "assets/real-elite.jpg" }
   compare: [],
 
-  // Logos scroll from left to right in the "Been part of the bigger picture" strip. Square logos look best.
+  // Logos scroll from right to left in the "Been part of the bigger picture" strip. Square logos look best.
   clients: [
     { name: "Gloma International", logo: "assets/clients/gloma.webp" },
     { name: "MAS Bodyline", logo: "assets/clients/mas.webp" },

@@ -529,7 +529,7 @@
     },
     {
       id: "editTools", label: "Editing tools", icon: "🛠️", anchor: ".tools-block",
-      note: "Logos that keep moving left to right under the reels. Square logos look best. Leave the list empty to hide the strip.",
+      note: "Logos that keep moving right to left under the reels. Square logos look best. Leave the list empty to hide the strip.",
       list: {
         key: "editTools", singular: "tool", title: (t) => t.name, thumb: (t) => t.logo,
         make: () => ({ name: "", logo: "" }),
@@ -650,7 +650,7 @@
     },
     {
       id: "clients", label: "Clients", icon: "🤝", anchor: ".clients",
-      note: "Logos in the “Been part of the bigger picture” strip, which keeps moving left to right. Square logos look best.",
+      note: "Logos in the “Been part of the bigger picture” strip, which keeps moving right to left. Square logos look best.",
       list: {
         key: "clients", singular: "client", title: (c) => c.name, thumb: (c) => c.logo,
         make: () => ({ name: "", logo: "" }),

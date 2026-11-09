@@ -163,8 +163,8 @@ body:not(.designing) .intro-skip { opacity: 0; pointer-events: none; }
 .marquee { border-block: 1px solid var(--line); background: var(--primary); color: var(--on-primary); overflow: hidden; padding: 14px 0; }
 .track { display: flex; gap: 28px; width: max-content; animation: scroll 40s linear infinite; font: 400 22px/1 var(--display); text-transform: uppercase; letter-spacing: .03em; }
 .track i { font-style: normal; opacity: .6; }
-/* moves left to right, like the logo strips */
-@keyframes scroll { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+/* moves right to left, like the logo strips */
+@keyframes scroll { to { transform: translateX(-50%); } }
 
 /* ---------- Sections ---------- */
 .section { padding: clamp(56px, 7vw, 96px) var(--pad); position: relative; }
@@ -377,11 +377,11 @@ h2 { font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--display); letter-spacing: .01e
 /* ---------- Clients ---------- */
 .clients { padding: 50px 0; border-block: 1px solid var(--line); background: var(--bg2); overflow: hidden; }
 .clients > .label { padding: 0 var(--pad); }
-/* logos move left → right forever; hover pauses them */
+/* logos move right → left forever; hover pauses them */
 .logo-marquee { margin-top: 22px; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
-.logo-track { display: flex; width: max-content; animation: logos-ltr var(--dur, 40s) linear infinite; }
+.logo-track { display: flex; width: max-content; animation: logos-rtl var(--dur, 40s) linear infinite; }
 .logo-marquee:hover .logo-track { animation-play-state: paused; }
-@keyframes logos-ltr { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+@keyframes logos-rtl { to { transform: translateX(-50%); } }
 .client { flex: none; display: flex; align-items: center; gap: 14px; margin-right: 18px; padding: 8px 24px 8px 8px; border: 1px solid var(--line); border-radius: 18px; background: var(--bg); white-space: nowrap; transition: border-color .3s; }
 .client:hover { border-color: var(--accent); }
 .client img, .client .ini { flex: none; width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: #fff; }

@@ -162,7 +162,7 @@
     }))
     .filter((s) => s.photos.length);
 
-  // ---------- Logo strips (clients, editing tools): they keep moving from left to right ----------
+  // ---------- Logo strips (clients, editing tools): they keep moving from right to left ----------
   function clientStrip(items = D.clients) {
     const list = items
       .map((c) => (typeof c === "string" ? { name: c, logo: "" } : c || {}))
