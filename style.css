@@ -163,7 +163,8 @@ body:not(.designing) .intro-skip { opacity: 0; pointer-events: none; }
 .marquee { border-block: 1px solid var(--line); background: var(--primary); color: var(--on-primary); overflow: hidden; padding: 14px 0; }
 .track { display: flex; gap: 28px; width: max-content; animation: scroll 40s linear infinite; font: 400 22px/1 var(--display); text-transform: uppercase; letter-spacing: .03em; }
 .track i { font-style: normal; opacity: .6; }
-@keyframes scroll { to { transform: translateX(-50%); } }
+/* moves left to right, like the logo strips */
+@keyframes scroll { from { transform: translateX(-50%); } to { transform: translateX(0); } }
 
 /* ---------- Sections ---------- */
 .section { padding: clamp(56px, 7vw, 96px) var(--pad); position: relative; }
