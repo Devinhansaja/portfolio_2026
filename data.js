@@ -138,6 +138,8 @@ const PORTFOLIO = {
 
   // Reels / video ads section (vertical 9:16 videos). Files live in assets/reels/
   reels: [
+    { title: "Ceylon Trust — Bank Statements for Visas", client: "Ceylon Trust Cooperation", length: "0:39", video: "assets/reels/ceylon-trust-ad.mp4", poster: "assets/reels/ceylon-trust-ad.jpg" },
+    { title: "Russel's Tea — Order Now", client: "Russels Dimbula Tea", length: "0:41", video: "assets/reels/russels-tea-order-ad.mp4", poster: "assets/reels/russels-tea-order-ad.jpg" },
     { title: "MAS — Sri Pada Clean-up 2026", client: "MAS Bodyline", length: "3:42", video: "assets/reels/mas-sripada-cleanup.mp4", poster: "assets/reels/mas-sripada-cleanup.jpg" },
     { title: "The Dark — AI Film, Part 1", client: "AI video", length: "1:21", video: "assets/reels/ai-the-dark.mp4", poster: "assets/reels/ai-the-dark.jpg" },
     { title: "Planet Protectors — Avurudu Wish", client: "Planet Protectors", length: "0:44", video: "assets/reels/planet-protectors-avurudu.mp4", poster: "assets/reels/planet-protectors-avurudu.jpg", wide: true, focus: "45% center" },
