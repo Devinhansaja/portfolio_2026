@@ -528,6 +528,15 @@
       },
     },
     {
+      id: "editTools", label: "Editing tools", icon: "🛠️", anchor: ".tools-block",
+      note: "Logos that keep moving left to right under the reels. Square logos look best. Leave the list empty to hide the strip.",
+      list: {
+        key: "editTools", singular: "tool", title: (t) => t.name, thumb: (t) => t.logo,
+        make: () => ({ name: "", logo: "" }),
+        fields: [T("name", "Tool name"), T("logo", "Logo", { type: "image", maxW: 300 })],
+      },
+    },
+    {
       id: "films", label: "Wedding films", icon: "🎞️", anchor: ".film-grid",
       note: "Landscape (16:9) videos shown under the reels, played right on the page. Leave the list empty to hide them.",
       list: {

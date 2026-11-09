@@ -391,6 +391,12 @@ h2 { font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--display); letter-spacing: .01e
   .client img, .client .ini { width: 44px; height: 44px; border-radius: 10px; }
 }
 
+/* ---------- Editing tools strip (under the reels, full width) ---------- */
+.tools-block { margin: 44px calc(-1 * var(--pad)) 0; }
+.tools-label { padding: 0 var(--pad); }
+.tools-block .logo-marquee { margin-top: 16px; }
+.tools-block .client img { background: transparent; object-fit: contain; border-radius: 12px; }
+
 /* ---------- Films (landscape) ---------- */
 .film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 18px; }
 .film-card.built:hover { border-color: var(--accent); }

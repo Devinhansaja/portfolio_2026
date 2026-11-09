@@ -9,7 +9,7 @@
   })();
   const D = PREVIEW || PORTFOLIO;
   // Make sure every list exists, so an empty list in the admin panel never breaks the page.
-  ["roles", "stats", "projects", "clients", "awards", "education", "skills", "tools", "process", "journey", "reels", "films", "youtube", "pages", "compare", "photos", "photoshoots"].forEach(
+  ["roles", "stats", "projects", "clients", "awards", "education", "skills", "tools", "process", "journey", "reels", "films", "editTools", "youtube", "pages", "compare", "photos", "photoshoots"].forEach(
     (k) => (D[k] = Array.isArray(D[k]) ? D[k] : [])
   );
   D.contact = D.contact || {};
@@ -162,9 +162,9 @@
     }))
     .filter((s) => s.photos.length);
 
-  // ---------- Client logos: a strip that keeps moving from left to right ----------
-  function clientStrip() {
-    const list = D.clients
+  // ---------- Logo strips (clients, editing tools): they keep moving from left to right ----------
+  function clientStrip(items = D.clients) {
+    const list = items
       .map((c) => (typeof c === "string" ? { name: c, logo: "" } : c || {}))
       .filter((c) => c.name || c.logo);
     if (!list.length) return "";
@@ -280,6 +280,7 @@
         )
         .join("")}
     </div>
+    ${D.editTools.length ? `<div class="tools-block"><p class="mono tools-label b">Tools I edit with</p>${clientStrip(D.editTools)}</div>` : ""}
     ${D.films.length ? filmsBlock() : ""}
     ${D.youtube.length ? youtubeBlock() : ""}
   </section>` : ""}
@@ -564,7 +565,7 @@
     ["h2", "Writing heading"], [".sec-note", "Writing text"], [".filters", "Adding filters"],
     [".card", "Adding project"], [".reel", "Adding reel"], [".yt-head h3", "Writing heading"],
     [".yt-series", "Adding link"], [".yt-card", "Embedding video"], [".fb-card", "Adding page"],
-    [".logo-marquee", "Adding client logos"], [".shoot", "Placing photoshoot"], [".shoots-link", "Adding link"], [".film-card", "Placing film"], [".cmp-tabs", "Adding tabs"], [".compare", "Placing slider"],
+    [".tools-block .logo-marquee", "Adding tools"], [".logo-marquee", "Adding client logos"], [".tools-label", "Adding label"], [".shoot", "Placing photoshoot"], [".shoots-link", "Adding link"], [".film-card", "Placing film"], [".cmp-tabs", "Adding tabs"], [".compare", "Placing slider"],
     [".cmp-caption", "Adding link"], [".col h4", "Adding title"], [".edu", "Adding education"],
     [".tags", "Adding tags"], [".step", "Adding step"], [".quote", "Adding quote"],
     [".wins", "Writing tagline"], [".tl-item", "Adding experience"], [".ct-rows li", "Adding contact"],
